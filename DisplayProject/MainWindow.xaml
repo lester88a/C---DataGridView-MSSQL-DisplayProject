@@ -1,0 +1,28 @@
+﻿<Window x:Class="DisplayProject.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DisplayProject"
+        mc:Ignorable="d"
+        Title="MainWindow" 
+        Height="{Binding SystemParameters.PrimaryScreenHeight}" 
+        Width="{Binding SystemParameters.PrimaryScreenWidth}" Loaded="Window_Loaded">
+    <Grid>
+        <ListView x:Name="lvPriorityDevices" HorizontalAlignment="Right" Height="auto" Margin="0,0,0,0" VerticalAlignment="Top" Width="auto">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn x:Name="gvcID" Header="ID" Width="120" DisplayMemberBinding="{Binding Path=Name}" />
+                    <GridViewColumn x:Name="gvcRef" Header="Ref#" Width="120" DisplayMemberBinding="{Binding Path=Name}" />
+                    <GridViewColumn x:Name="gvcESN" Header="ESN" Width="120" DisplayMemberBinding="{Binding Path=Name}" />
+                    <GridViewColumn x:Name="gvcGSPN" Header="GSPN#" Width="120" DisplayMemberBinding="{Binding Path=Name}" />
+                    <GridViewColumn x:Name="gvcAct" Header="Act" Width="120" DisplayMemberBinding="{Binding Path=Name}" />
+                    <GridViewColumn x:Name="gvcDateCrt" Header="DateCreated" Width="120" DisplayMemberBinding="{Binding Path=Name}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <DataGrid x:Name="grdRepair" HorizontalAlignment="Left" Margin="75,101,0,0" VerticalAlignment="Top"/>
+        <Grid HorizontalAlignment="Left" Height="100" Margin="144,274,0,0" VerticalAlignment="Top" Width="100"/>
+
+    </Grid>
+</Window>
