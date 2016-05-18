@@ -17,7 +17,6 @@ namespace DisPlay
         private int pgSize = 20;
         private int totalPage = 0;
         private int rowCount = 0;
-        private int rowCountForNext = 0;
 
         private Timer MyTimer;
 
@@ -26,14 +25,21 @@ namespace DisPlay
             InitializeComponent();
             //auto full screen
             WindowState = FormWindowState.Maximized;
+            //hide title bar
+            this.FormBorderStyle = FormBorderStyle.None;
+            //hide the last blank row
+            this.grdRepair.AllowUserToAddRows = false;
+            //hide the row header
+            this.grdRepair.RowHeadersVisible = false;
 
             //change the header font colors
             lblHeader.ForeColor = Color.FromArgb(200, 180, 26);
             //change the label color
             lblTotalRecords.ForeColor = Color.FromArgb(200, 180, 26);
             lblTotalPages.ForeColor = Color.FromArgb(200, 180, 26);
+            lblTotalRows.ForeColor = Color.FromArgb(200, 180, 26);
             //change the font of gridview content
-            this.grdRepair.DefaultCellStyle.Font = new Font("Tahoma", 24);
+            this.grdRepair.DefaultCellStyle.Font = new Font("Tahoma", 26);
             this.grdRepair.DefaultCellStyle.ForeColor = Color.FromArgb(200, 180, 26);
             this.grdRepair.DefaultCellStyle.BackColor = Color.FromArgb(0, 0, 0);
             //change the font of gridview header
@@ -59,6 +65,35 @@ namespace DisPlay
             
         }
 
+        //quit the application
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        //cell formatting - change the font color when the aging is grater than 5 
+        private void grdRepair_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            try
+            {
+                foreach (DataGridViewRow row in grdRepair.Rows)
+                {
+                    if ((int)row.Cells["AGING"].Value <= 1)
+                    {
+                        row.DefaultCellStyle.ForeColor = Color.FromArgb(200, 180, 26);
+                    }
+                    else
+                    {
+                        row.DefaultCellStyle.ForeColor = Color.Red;
+                    }
+                }
+            }
+            catch (Exception er)
+            {
+
+                MessageBox.Show(er.ToString());
+            }
+        }
         //calculate total pages
         private void CalculateTotalPages()
         {
@@ -75,8 +110,10 @@ namespace DisPlay
         //connection to db, get all data, assign the data to the datagridview
         private void getData(int total)
         {
+            //totalrows variable
+            int totalRows = TotalRows();
             //set total rows
-            lblTotalRows.Text = "Total Records: " + TotalRows().ToString();
+            lblTotalRows.Text = "Total Records: " + totalRows.ToString();
 
             //sign the connection string value
             connectionString = "Data Source=ESDB;Initial Catalog=EasyDB;Integrated Security=True";
@@ -93,7 +130,7 @@ namespace DisPlay
                 dataSet = new DataSet("priDev");
                 
                 //Fill the dataset with tblRepair, map the default table "Table" to "tblRepair"
-                SqlDataAdapter dataAdapter1 = new SqlDataAdapter("select TOP " + total + "RefNumber as Ref#, convert(date,DateIn) as DateIn,FuturetelLocation, DATEDIFF(day, DateIn, convert(date, GETDATE())) as Aging, LastTechnician from tblRepair where DateIn between '20160310' and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' AND (SVP != 'KCC' AND SVP != 'TCC') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') and (Status != 'X' and Status != 'C'and Status != 'I') group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by DateIn, FuturetelLocation, Aging DESC", connection);
+                SqlDataAdapter dataAdapter1 = new SqlDataAdapter("select TOP " + total + "RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' AND (SVP != 'KCC' AND SVP != 'TCC') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I' and Status != 'B') group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ", connection);
                 
                 //map
                 dataAdapter1.TableMappings.Add("Table", "tblRepair");
@@ -130,7 +167,7 @@ namespace DisPlay
         //get the total rows
         public int TotalRows()
         {
-            string stmt = "select COUNT(*) from tblRepair where DateIn between '20160310' and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' AND (SVP != 'KCC' AND SVP != 'TCC') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') and (Status != 'X' and Status != 'C'and Status != 'I')";
+            string stmt = "select COUNT(*) from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' AND (SVP != 'KCC' AND SVP != 'TCC') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I' and Status != 'B')";
             int count = 0;
 
             using (SqlConnection thisConnection = new SqlConnection("Data Source=ESDB;Initial Catalog=EasyDB;Integrated Security=True"))
@@ -162,7 +199,14 @@ namespace DisPlay
             getData(40);
             MyTimer = new Timer();
             MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
-            MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_60);
+            if (TotalRows() > 40)
+            {
+                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_60);
+            }
+            else
+            {
+                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+            }
             MyTimer.Start();
         }
 
@@ -173,7 +217,14 @@ namespace DisPlay
             getData(60);
             MyTimer = new Timer();
             MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
-            MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_80);
+            if (TotalRows() > 60)
+            {
+                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_80);
+            }
+            else
+            {
+                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+            }
             MyTimer.Start();
         }
         //MyTimer_Tick_Get_Top_80
@@ -183,7 +234,14 @@ namespace DisPlay
             getData(80);
             MyTimer = new Timer();
             MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
-            MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_100);
+            if (TotalRows() > 80)
+            {
+                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_100);
+            }
+            else
+            {
+                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+            }
             MyTimer.Start();
         }
         //MyTimer_Tick_Get_Top_100
@@ -477,5 +535,6 @@ namespace DisPlay
             MyTimer.Start();
         }
 
+        
     }
 }
