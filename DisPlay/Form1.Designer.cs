@@ -37,14 +37,20 @@
             this.btnExit = new System.Windows.Forms.PictureBox();
             this.lblRepOutput = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.dataGridView2 = new System.Windows.Forms.DataGridView();
-            this.dataGridView3 = new System.Windows.Forms.DataGridView();
+            this.grdBKSum = new System.Windows.Forms.DataGridView();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.lblBKSTotalRows = new System.Windows.Forms.Label();
+            this.lblTotalRecordsBKS = new System.Windows.Forms.Label();
+            this.lblTotalPagesBKS = new System.Windows.Forms.Label();
+            this.lblAllAging = new System.Windows.Forms.Label();
+            this.blbRepOut07 = new System.Windows.Forms.Label();
+            this.grdTechOutput = new System.Windows.Forms.DataGridView();
+            this.lblTime = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.grdRepair)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnExit)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.grdBKSum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.grdTechOutput)).BeginInit();
             this.SuspendLayout();
             // 
             // grdRepair
@@ -56,11 +62,11 @@
             this.grdRepair.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.grdRepair.BackgroundColor = System.Drawing.Color.Black;
             this.grdRepair.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grdRepair.Location = new System.Drawing.Point(528, 58);
+            this.grdRepair.Location = new System.Drawing.Point(715, 58);
             this.grdRepair.Name = "grdRepair";
             this.grdRepair.ReadOnly = true;
             this.grdRepair.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.grdRepair.Size = new System.Drawing.Size(611, 651);
+            this.grdRepair.Size = new System.Drawing.Size(534, 651);
             this.grdRepair.TabIndex = 0;
             this.grdRepair.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.grdRepair_CellFormatting);
             // 
@@ -69,7 +75,7 @@
             this.lblHeader.AutoSize = true;
             this.lblHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblHeader.ForeColor = System.Drawing.Color.Yellow;
-            this.lblHeader.Location = new System.Drawing.Point(523, 26);
+            this.lblHeader.Location = new System.Drawing.Point(710, 25);
             this.lblHeader.Name = "lblHeader";
             this.lblHeader.Size = new System.Drawing.Size(180, 29);
             this.lblHeader.TabIndex = 1;
@@ -81,7 +87,7 @@
             this.lblTotalPages.BackColor = System.Drawing.Color.Transparent;
             this.lblTotalPages.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalPages.ForeColor = System.Drawing.SystemColors.Control;
-            this.lblTotalPages.Location = new System.Drawing.Point(711, 31);
+            this.lblTotalPages.Location = new System.Drawing.Point(898, 30);
             this.lblTotalPages.Name = "lblTotalPages";
             this.lblTotalPages.Size = new System.Drawing.Size(60, 24);
             this.lblTotalPages.TabIndex = 2;
@@ -93,7 +99,7 @@
             this.lblTotalRecords.BackColor = System.Drawing.Color.Transparent;
             this.lblTotalRecords.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalRecords.ForeColor = System.Drawing.SystemColors.Control;
-            this.lblTotalRecords.Location = new System.Drawing.Point(835, 31);
+            this.lblTotalRecords.Location = new System.Drawing.Point(1022, 30);
             this.lblTotalRecords.Name = "lblTotalRecords";
             this.lblTotalRecords.Size = new System.Drawing.Size(60, 24);
             this.lblTotalRecords.TabIndex = 3;
@@ -105,7 +111,7 @@
             this.lblTotalRows.BackColor = System.Drawing.Color.Transparent;
             this.lblTotalRows.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalRows.ForeColor = System.Drawing.SystemColors.Control;
-            this.lblTotalRows.Location = new System.Drawing.Point(1003, 31);
+            this.lblTotalRows.Location = new System.Drawing.Point(1190, 30);
             this.lblTotalRows.Name = "lblTotalRows";
             this.lblTotalRows.Size = new System.Drawing.Size(60, 24);
             this.lblTotalRows.TabIndex = 4;
@@ -114,8 +120,6 @@
             // btnExit
             // 
             this.btnExit.BackColor = System.Drawing.Color.Transparent;
-            this.btnExit.BackgroundImage = global::DisPlay.Properties.Resources.close_green;
-            this.btnExit.Image = global::DisPlay.Properties.Resources.close_green;
             this.btnExit.Location = new System.Drawing.Point(1, 1);
             this.btnExit.Name = "btnExit";
             this.btnExit.Size = new System.Drawing.Size(20, 20);
@@ -126,63 +130,175 @@
             // 
             // lblRepOutput
             // 
+            this.lblRepOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblRepOutput.AutoSize = true;
             this.lblRepOutput.BackColor = System.Drawing.Color.Transparent;
-            this.lblRepOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblRepOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblRepOutput.ForeColor = System.Drawing.SystemColors.Control;
-            this.lblRepOutput.Location = new System.Drawing.Point(269, 31);
+            this.lblRepOutput.Location = new System.Drawing.Point(290, 420);
             this.lblRepOutput.Name = "lblRepOutput";
-            this.lblRepOutput.Size = new System.Drawing.Size(60, 24);
+            this.lblRepOutput.Size = new System.Drawing.Size(45, 16);
             this.lblRepOutput.TabIndex = 8;
             this.lblRepOutput.Text = "label1";
+            this.lblRepOutput.Visible = false;
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.Yellow;
-            this.label2.Location = new System.Drawing.Point(12, 26);
+            this.label2.Location = new System.Drawing.Point(17, 300);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(223, 29);
             this.label2.TabIndex = 7;
             this.label2.Text = "Tech Repair Output";
             // 
-            // dataGridView1
+            // grdBKSum
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(12, 58);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(510, 318);
-            this.dataGridView1.TabIndex = 9;
+            this.grdBKSum.AllowUserToAddRows = false;
+            this.grdBKSum.AllowUserToDeleteRows = false;
+            this.grdBKSum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.grdBKSum.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.grdBKSum.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.grdBKSum.BackgroundColor = System.Drawing.Color.Black;
+            this.grdBKSum.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grdBKSum.Location = new System.Drawing.Point(17, 182);
+            this.grdBKSum.Name = "grdBKSum";
+            this.grdBKSum.ReadOnly = true;
+            this.grdBKSum.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.grdBKSum.Size = new System.Drawing.Size(688, 115);
+            this.grdBKSum.TabIndex = 11;
             // 
-            // dataGridView2
+            // label1
             // 
-            this.dataGridView2.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView2.Location = new System.Drawing.Point(12, 382);
-            this.dataGridView2.Name = "dataGridView2";
-            this.dataGridView2.Size = new System.Drawing.Size(510, 161);
-            this.dataGridView2.TabIndex = 10;
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.Color.Yellow;
+            this.label1.Location = new System.Drawing.Point(17, 144);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(242, 29);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "Back Order Summary";
             // 
-            // dataGridView3
+            // label3
             // 
-            this.dataGridView3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.dataGridView3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView3.Location = new System.Drawing.Point(12, 549);
-            this.dataGridView3.Name = "dataGridView3";
-            this.dataGridView3.Size = new System.Drawing.Size(510, 160);
-            this.dataGridView3.TabIndex = 11;
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.ForeColor = System.Drawing.Color.Yellow;
+            this.label3.Location = new System.Drawing.Point(17, 25);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(158, 29);
+            this.label3.TabIndex = 13;
+            this.label3.Text = "Overall Aging";
+            // 
+            // lblBKSTotalRows
+            // 
+            this.lblBKSTotalRows.AutoSize = true;
+            this.lblBKSTotalRows.BackColor = System.Drawing.Color.Transparent;
+            this.lblBKSTotalRows.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblBKSTotalRows.ForeColor = System.Drawing.SystemColors.Control;
+            this.lblBKSTotalRows.Location = new System.Drawing.Point(407, 153);
+            this.lblBKSTotalRows.Name = "lblBKSTotalRows";
+            this.lblBKSTotalRows.Size = new System.Drawing.Size(45, 16);
+            this.lblBKSTotalRows.TabIndex = 14;
+            this.lblBKSTotalRows.Text = "label1";
+            // 
+            // lblTotalRecordsBKS
+            // 
+            this.lblTotalRecordsBKS.AutoSize = true;
+            this.lblTotalRecordsBKS.BackColor = System.Drawing.Color.Transparent;
+            this.lblTotalRecordsBKS.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTotalRecordsBKS.ForeColor = System.Drawing.SystemColors.Control;
+            this.lblTotalRecordsBKS.Location = new System.Drawing.Point(332, 153);
+            this.lblTotalRecordsBKS.Name = "lblTotalRecordsBKS";
+            this.lblTotalRecordsBKS.Size = new System.Drawing.Size(45, 16);
+            this.lblTotalRecordsBKS.TabIndex = 15;
+            this.lblTotalRecordsBKS.Text = "label1";
+            // 
+            // lblTotalPagesBKS
+            // 
+            this.lblTotalPagesBKS.AutoSize = true;
+            this.lblTotalPagesBKS.BackColor = System.Drawing.Color.Transparent;
+            this.lblTotalPagesBKS.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTotalPagesBKS.ForeColor = System.Drawing.SystemColors.Control;
+            this.lblTotalPagesBKS.Location = new System.Drawing.Point(266, 153);
+            this.lblTotalPagesBKS.Name = "lblTotalPagesBKS";
+            this.lblTotalPagesBKS.Size = new System.Drawing.Size(45, 16);
+            this.lblTotalPagesBKS.TabIndex = 16;
+            this.lblTotalPagesBKS.Text = "label1";
+            // 
+            // lblAllAging
+            // 
+            this.lblAllAging.AutoSize = true;
+            this.lblAllAging.BackColor = System.Drawing.Color.Transparent;
+            this.lblAllAging.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAllAging.ForeColor = System.Drawing.SystemColors.Control;
+            this.lblAllAging.Location = new System.Drawing.Point(16, 58);
+            this.lblAllAging.Name = "lblAllAging";
+            this.lblAllAging.Size = new System.Drawing.Size(86, 31);
+            this.lblAllAging.TabIndex = 17;
+            this.lblAllAging.Text = "label1";
+            // 
+            // blbRepOut07
+            // 
+            this.blbRepOut07.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.blbRepOut07.AutoSize = true;
+            this.blbRepOut07.BackColor = System.Drawing.Color.Transparent;
+            this.blbRepOut07.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.blbRepOut07.ForeColor = System.Drawing.SystemColors.Control;
+            this.blbRepOut07.Location = new System.Drawing.Point(19, 420);
+            this.blbRepOut07.Name = "blbRepOut07";
+            this.blbRepOut07.Size = new System.Drawing.Size(45, 16);
+            this.blbRepOut07.TabIndex = 18;
+            this.blbRepOut07.Text = "label1";
+            this.blbRepOut07.Visible = false;
+            // 
+            // grdTechOutput
+            // 
+            this.grdTechOutput.AllowUserToAddRows = false;
+            this.grdTechOutput.AllowUserToDeleteRows = false;
+            this.grdTechOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.grdTechOutput.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.grdTechOutput.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.grdTechOutput.BackgroundColor = System.Drawing.Color.Black;
+            this.grdTechOutput.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grdTechOutput.Location = new System.Drawing.Point(17, 332);
+            this.grdTechOutput.Name = "grdTechOutput";
+            this.grdTechOutput.ReadOnly = true;
+            this.grdTechOutput.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.grdTechOutput.Size = new System.Drawing.Size(688, 377);
+            this.grdTechOutput.TabIndex = 19;
+            this.grdTechOutput.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.grdTechOutput_CellFormatting);
+            // 
+            // lblTime
+            // 
+            this.lblTime.AutoSize = true;
+            this.lblTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTime.ForeColor = System.Drawing.Color.Lime;
+            this.lblTime.Location = new System.Drawing.Point(18, 1);
+            this.lblTime.Name = "lblTime";
+            this.lblTime.Size = new System.Drawing.Size(60, 24);
+            this.lblTime.TabIndex = 20;
+            this.lblTime.Text = "label4";
             // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(1151, 721);
-            this.Controls.Add(this.dataGridView3);
-            this.Controls.Add(this.dataGridView2);
-            this.Controls.Add(this.dataGridView1);
+            this.ClientSize = new System.Drawing.Size(1261, 721);
+            this.Controls.Add(this.lblTime);
+            this.Controls.Add(this.blbRepOut07);
             this.Controls.Add(this.lblRepOutput);
+            this.Controls.Add(this.lblAllAging);
+            this.Controls.Add(this.lblTotalPagesBKS);
+            this.Controls.Add(this.lblTotalRecordsBKS);
+            this.Controls.Add(this.lblBKSTotalRows);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.grdBKSum);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnExit);
             this.Controls.Add(this.lblTotalRows);
@@ -190,13 +306,14 @@
             this.Controls.Add(this.lblTotalPages);
             this.Controls.Add(this.lblHeader);
             this.Controls.Add(this.grdRepair);
+            this.Controls.Add(this.grdTechOutput);
             this.Name = "mainForm";
             this.Text = "Information Board";
+            this.Load += new System.EventHandler(this.mainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.grdRepair)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnExit)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.grdBKSum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.grdTechOutput)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -213,9 +330,16 @@
         private System.Windows.Forms.PictureBox btnExit;
         private System.Windows.Forms.Label lblRepOutput;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.DataGridView dataGridView2;
-        private System.Windows.Forms.DataGridView dataGridView3;
+        private System.Windows.Forms.DataGridView grdBKSum;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblBKSTotalRows;
+        private System.Windows.Forms.Label lblTotalRecordsBKS;
+        private System.Windows.Forms.Label lblTotalPagesBKS;
+        private System.Windows.Forms.Label lblAllAging;
+        private System.Windows.Forms.Label blbRepOut07;
+        private System.Windows.Forms.DataGridView grdTechOutput;
+        private System.Windows.Forms.Label lblTime;
     }
 }
 
