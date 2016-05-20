@@ -17,12 +17,14 @@ namespace DisPlay
         private SqlConnection connection;
 
         private int pgSize = 20;
-        private int pgSizeBKS = 15;
+        private int pgSizeBKS = 11;
+        private int pgSizeTech = 10;
         private int totalPage = 0;
         private int rowCount = 0;
 
         private Timer MyTimer;
         private Timer MyTimerBKS;
+        private Timer MyTimerTech;
 
         private string currentDate;
         //digital clock variable
@@ -52,11 +54,11 @@ namespace DisPlay
             lblTotalPagesBKS.ForeColor = Color.FromArgb(200, 180, 26);
             lblBKSTotalRows.ForeColor = Color.FromArgb(200, 180, 26);
             //change the font of gridview content
-            this.grdRepair.DefaultCellStyle.Font = new Font("Tahoma", 26);
+            this.grdRepair.DefaultCellStyle.Font = new Font("Tahoma", 27);
             this.grdRepair.DefaultCellStyle.ForeColor = Color.FromArgb(200, 180, 26);
             this.grdRepair.DefaultCellStyle.BackColor = Color.FromArgb(0, 0, 0);
             //change the font of gridview header
-            this.grdRepair.ColumnHeadersDefaultCellStyle.Font = new Font("Tahoma", 20, FontStyle.Bold);
+            this.grdRepair.ColumnHeadersDefaultCellStyle.Font = new Font("Tahoma", 24, FontStyle.Bold);
             this.grdRepair.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(200, 180, 26);
             this.grdRepair.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(0, 0, 0);
             this.grdRepair.RowHeadersDefaultCellStyle.ForeColor = Color.FromArgb(200, 180, 26);
@@ -67,11 +69,11 @@ namespace DisPlay
             this.grdRepair.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
             //change the font of grdBKS
-            this.grdBKSum.ColumnHeadersDefaultCellStyle.Font = new Font("Tahoma", 12, FontStyle.Bold);
+            this.grdBKSum.ColumnHeadersDefaultCellStyle.Font = new Font("Tahoma", 14, FontStyle.Bold);
             this.grdBKSum.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(200, 180, 26);
             this.grdBKSum.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(0, 0, 0);
             //change the font of gridview content
-            this.grdBKSum.DefaultCellStyle.Font = new Font("Tahoma", 14);
+            this.grdBKSum.DefaultCellStyle.Font = new Font("Tahoma", 22);
             this.grdBKSum.DefaultCellStyle.ForeColor = Color.FromArgb(200, 180, 26);
             this.grdBKSum.DefaultCellStyle.BackColor = Color.FromArgb(0, 0, 0);
             //center the header data of grdBKSum gridview
@@ -84,7 +86,7 @@ namespace DisPlay
             this.grdTechOutput.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(200, 180, 26);
             this.grdTechOutput.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(0, 0, 0);
             //change the font of gridview content
-            this.grdTechOutput.DefaultCellStyle.Font = new Font("Tahoma", 14);
+            this.grdTechOutput.DefaultCellStyle.Font = new Font("Tahoma", 18);
             this.grdTechOutput.DefaultCellStyle.ForeColor = Color.FromArgb(200, 180, 26);
             this.grdTechOutput.DefaultCellStyle.BackColor = Color.FromArgb(0, 0, 0);
             //center the header data of grdTechOutput gridview
@@ -109,6 +111,8 @@ namespace DisPlay
             GetPriorityDevicesData();
             //get back order summary info
             GetBackOrderSumData();
+            //get tech repair output info
+            GetTechRepairOutputData();
 
         }
 
@@ -125,19 +129,28 @@ namespace DisPlay
             this.lblTime.Text = DateTime.Now.ToString("yyyy-MM-dd  HH:mm");
         }
 
+        private void GetTechRepairOutputData()
+        {
+            getAllTechOutput(this.pgSizeTech * 1);
+            MyTimerTech = new Timer();
+            MyTimerTech.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimerTech.Tick += new EventHandler(MyTimer_Tick_Get_Tech_Top_2); //get the next 15 data
+            MyTimerTech.Start();
+        }
+
         private void GetBackOrderSumData()
         {
-            getBackOrderSum(15);
+            getBackOrderSum(this.pgSizeBKS * 1);
             MyTimerBKS = new Timer();
             MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
-            MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_30); //get the next 15 data
+            MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_2); //get the next 15 data
             MyTimerBKS.Start();
         }
 
         private void GetPriorityDevicesData()
         {
             //get first 20 data when app starts
-            getData(20);
+            getData(this.pgSize * 1);
             MyTimer = new Timer();
             MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
             MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_40); //get the next 20 data
@@ -228,7 +241,7 @@ namespace DisPlay
         }
 
         //getAllTechOutput
-        private void getAllTechOutput()
+        private void getAllTechOutput(int total)
         {
             //sign the connection string value
             connectionString = "Data Source=ESDB;Initial Catalog=EasyDB;Integrated Security=True";
@@ -242,7 +255,7 @@ namespace DisPlay
 
                 //create the DataSet
                 dataSet = new DataSet("priDev");
-                string cmd = @"SELECT FirstName+' '+LastName as Technician,count(FirstName + LastName) as Total
+                string cmd = @"SELECT TOP " + total + @" FirstName+' '+LastName as Technician,count(FirstName + LastName) as Total
                             FROM tblRepair JOIN tblUser ON LastTechnician = UserName 
                             where (DateFinish >= '05/20/2016 07:00:00' AND DateFinish < '05/20/2016 20:00:00')  
                             and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 
@@ -267,6 +280,9 @@ namespace DisPlay
                 grdTechOutput.DataSource = dataViewManager;
                 grdTechOutput.DataMember = "tblRepair";
 
+                /**************scrooling********************************************/
+                //scrool down to buttom
+                grdTechOutput.FirstDisplayedScrollingRowIndex = grdTechOutput.RowCount - 1;
 
                 //close the connection
                 connection.Close();
@@ -329,7 +345,7 @@ namespace DisPlay
                 //lblRepOutput.Text = GetAllTechs2PMorMore();
                 //blbRepOut07.Text = GetAllTechs07To10AM();
                 /*********************************************************************/
-                getAllTechOutput();
+               
                 //close the connection
                 connection.Close();
 
@@ -568,83 +584,211 @@ namespace DisPlay
             }
             return resultAging;
         }
-        //MyTimer_Tick_Get_BKS_Top_15----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_15(object sender, EventArgs e)
+        //MyTimer_Tick_Get_Tech_Top_1----------------------Tech
+        private void MyTimer_Tick_Get_Tech_Top_1(object sender, EventArgs e)
         {
-            MyTimerBKS.Stop();
-            getBackOrderSum(15);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
-            MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_30);
-            MyTimerBKS.Start();
+            MyTimerTech.Stop();
+            getAllTechOutput(this.pgSizeTech*1);
+            MyTimerTech = new Timer();
+            MyTimerTech.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimerTech.Tick += new EventHandler(MyTimer_Tick_Get_Tech_Top_2);
+            MyTimerTech.Start();
         }
-
-        //MyTimer_Tick_Get_BKS_Top_30----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_30(object sender, EventArgs e)
+        //MyTimer_Tick_Get_Tech_Top_2----------------------Tech
+        private void MyTimer_Tick_Get_Tech_Top_2(object sender, EventArgs e)
         {
-            MyTimerBKS.Stop();
-            getBackOrderSum(30);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
-            if (TotalRowsBKS() > 30)
+            MyTimerTech.Stop();
+            getAllTechOutput(this.pgSizeTech * 2);
+            MyTimerTech = new Timer();
+            MyTimerTech.Interval = (1 * 5 * 1000); // 5 seconds
+            if (TotalRowsBKS() > this.pgSizeTech * 2)
             {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_45);
+                MyTimerTech.Tick += new EventHandler(MyTimer_Tick_Get_Tech_Top_3);
             }
             else
             {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_15);
+                MyTimerTech.Tick += new EventHandler(MyTimer_Tick_Get_Tech_Top_1);
+            }
+            MyTimerTech.Start();
+        }
+        //MyTimer_Tick_Get_Tech_Top_3----------------------Tech
+        private void MyTimer_Tick_Get_Tech_Top_3(object sender, EventArgs e)
+        {
+            MyTimerTech.Stop();
+            getAllTechOutput(this.pgSizeTech * 3);
+            MyTimerTech = new Timer();
+            MyTimerTech.Interval = (1 * 5 * 1000); // 5 seconds
+            if (TotalRowsBKS() > this.pgSizeTech * 3)
+            {
+                MyTimerTech.Tick += new EventHandler(MyTimer_Tick_Get_Tech_Top_1);
+            }
+            else
+            {
+                MyTimerTech.Tick += new EventHandler(MyTimer_Tick_Get_Tech_Top_1);
+            }
+            MyTimerTech.Start();
+        }
+        //MyTimer_Tick_Get_BKS_Top_1----------------------BKS
+        private void MyTimer_Tick_Get_BKS_Top_1(object sender, EventArgs e)
+        {
+            MyTimerBKS.Stop();
+            getBackOrderSum(this.pgSizeBKS);
+            MyTimerBKS = new Timer();
+            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_2);
+            MyTimerBKS.Start();
+        }
+        //MyTimer_Tick_Get_BKS_Top_2----------------------BKS
+        private void MyTimer_Tick_Get_BKS_Top_2(object sender, EventArgs e)
+        {
+            MyTimerBKS.Stop();
+            getBackOrderSum(this.pgSizeBKS*2);
+            MyTimerBKS = new Timer();
+            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+            if (TotalRowsBKS() > this.pgSizeBKS * 2)
+            {
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_3);
+            }
+            else
+            {
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
             }
             MyTimerBKS.Start();
         }
-        //MyTimer_Tick_Get_BKS_Top_45----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_45(object sender, EventArgs e)
+        //MyTimer_Tick_Get_BKS_Top_3----------------------BKS
+        private void MyTimer_Tick_Get_BKS_Top_3(object sender, EventArgs e)
         {
             MyTimerBKS.Stop();
-            getBackOrderSum(45);
+            getBackOrderSum(this.pgSizeBKS * 3);
             MyTimerBKS = new Timer();
             MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
-            if (TotalRowsBKS() > 45)
+            if (TotalRowsBKS() > this.pgSizeBKS * 3)
             {
                 //MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_60);
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_60);
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_4);
             }
             else
             {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_15);
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
             }
             MyTimerBKS.Start();
         }
-        //MyTimer_Tick_Get_BKS_Top_60----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_60(object sender, EventArgs e)
+        //MyTimer_Tick_Get_BKS_Top_4----------------------BKS
+        private void MyTimer_Tick_Get_BKS_Top_4(object sender, EventArgs e)
         {
             MyTimerBKS.Stop();
-            getBackOrderSum(60);
+            getBackOrderSum(this.pgSizeBKS * 4);
             MyTimerBKS = new Timer();
             MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
-            if (TotalRowsBKS() > 60)
+            if (TotalRowsBKS() > this.pgSizeBKS * 4)
             {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_75);
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_5);
             }
             else
             {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_15);
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
             }
             MyTimerBKS.Start();
         }
-        //MyTimer_Tick_Get_BKS_Top_75----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_75(object sender, EventArgs e)
+        //MyTimer_Tick_Get_BKS_Top_5----------------------BKS
+        private void MyTimer_Tick_Get_BKS_Top_5(object sender, EventArgs e)
         {
             MyTimerBKS.Stop();
-            getBackOrderSum(75);
+            getBackOrderSum(this.pgSizeBKS * 5);
             MyTimerBKS = new Timer();
             MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
-            if (TotalRowsBKS() > 75)
+            if (TotalRowsBKS() > this.pgSizeBKS * 5)
             {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_15);
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_6);
             }
             else
             {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_15);
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+            }
+            MyTimerBKS.Start();
+        }
+        //MyTimer_Tick_Get_BKS_Top_6----------------------BKS
+        private void MyTimer_Tick_Get_BKS_Top_6(object sender, EventArgs e)
+        {
+            MyTimerBKS.Stop();
+            getBackOrderSum(this.pgSizeBKS * 6);
+            MyTimerBKS = new Timer();
+            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+            if (TotalRowsBKS() > this.pgSizeBKS * 6)
+            {
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+            }
+            else
+            {
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+            }
+            MyTimerBKS.Start();
+        }
+        //MyTimer_Tick_Get_BKS_Top_7----------------------BKS
+        private void MyTimer_Tick_Get_BKS_Top_7(object sender, EventArgs e)
+        {
+            MyTimerBKS.Stop();
+            getBackOrderSum(this.pgSizeBKS * 7);
+            MyTimerBKS = new Timer();
+            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+            if (TotalRowsBKS() > this.pgSizeBKS * 7)
+            {
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_8);
+            }
+            else
+            {
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+            }
+            MyTimerBKS.Start();
+        }
+        //MyTimer_Tick_Get_BKS_Top_8----------------------BKS
+        private void MyTimer_Tick_Get_BKS_Top_8(object sender, EventArgs e)
+        {
+            MyTimerBKS.Stop();
+            getBackOrderSum(this.pgSizeBKS * 8);
+            MyTimerBKS = new Timer();
+            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+            if (TotalRowsBKS() > this.pgSizeBKS * 8)
+            {
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_9);
+            }
+            else
+            {
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+            }
+            MyTimerBKS.Start();
+        }
+        //MyTimer_Tick_Get_BKS_Top_8----------------------BKS
+        private void MyTimer_Tick_Get_BKS_Top_9(object sender, EventArgs e)
+        {
+            MyTimerBKS.Stop();
+            getBackOrderSum(this.pgSizeBKS * 9);
+            MyTimerBKS = new Timer();
+            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+            if (TotalRowsBKS() > this.pgSizeBKS * 9)
+            {
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_10);
+            }
+            else
+            {
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+            }
+            MyTimerBKS.Start();
+        }
+        //MyTimer_Tick_Get_BKS_Top_8----------------------BKS
+        private void MyTimer_Tick_Get_BKS_Top_10(object sender, EventArgs e)
+        {
+            MyTimerBKS.Stop();
+            getBackOrderSum(this.pgSizeBKS * 10);
+            MyTimerBKS = new Timer();
+            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+            if (TotalRowsBKS() > this.pgSizeBKS * 10)
+            {
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+            }
+            else
+            {
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
             }
             MyTimerBKS.Start();
         }

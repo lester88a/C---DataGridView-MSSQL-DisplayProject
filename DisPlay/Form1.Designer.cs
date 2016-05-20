@@ -274,14 +274,15 @@
             // 
             // lblTime
             // 
-            this.lblTime.AutoSize = true;
-            this.lblTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTime.ForeColor = System.Drawing.Color.Lime;
-            this.lblTime.Location = new System.Drawing.Point(18, 1);
+            this.lblTime.Location = new System.Drawing.Point(902, 7);
             this.lblTime.Name = "lblTime";
-            this.lblTime.Size = new System.Drawing.Size(60, 24);
+            this.lblTime.Size = new System.Drawing.Size(347, 23);
             this.lblTime.TabIndex = 20;
             this.lblTime.Text = "label4";
+            this.lblTime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // mainForm
             // 
