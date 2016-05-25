@@ -34,8 +34,6 @@
             this.lblTotalPages = new System.Windows.Forms.Label();
             this.lblTotalRecords = new System.Windows.Forms.Label();
             this.lblTotalRows = new System.Windows.Forms.Label();
-            this.btnExit = new System.Windows.Forms.PictureBox();
-            this.lblRepOutput = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.grdBKSum = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
@@ -43,14 +41,26 @@
             this.lblBKSTotalRows = new System.Windows.Forms.Label();
             this.lblTotalRecordsBKS = new System.Windows.Forms.Label();
             this.lblTotalPagesBKS = new System.Windows.Forms.Label();
-            this.lblAllAging = new System.Windows.Forms.Label();
-            this.blbRepOut07 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.grdTechOutput = new System.Windows.Forms.DataGridView();
             this.lblTime = new System.Windows.Forms.Label();
+            this.btnExit = new System.Windows.Forms.PictureBox();
+            this.btnOpenConf = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.lblAg1 = new System.Windows.Forms.Label();
+            this.lblAg2 = new System.Windows.Forms.Label();
+            this.lblAg3 = new System.Windows.Forms.Label();
+            this.lblAg4 = new System.Windows.Forms.Label();
+            this.lblAg5 = new System.Windows.Forms.Label();
+            this.lblAg6 = new System.Windows.Forms.Label();
+            this.lblAg7 = new System.Windows.Forms.Label();
+            this.grdTechOutput2 = new System.Windows.Forms.DataGridView();
+            this.lblTechOutTotalRows = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.grdRepair)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.btnExit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grdBKSum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grdTechOutput)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnExit)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.grdTechOutput2)).BeginInit();
             this.SuspendLayout();
             // 
             // grdRepair
@@ -117,31 +127,6 @@
             this.lblTotalRows.TabIndex = 4;
             this.lblTotalRows.Text = "label1";
             // 
-            // btnExit
-            // 
-            this.btnExit.BackColor = System.Drawing.Color.Transparent;
-            this.btnExit.Location = new System.Drawing.Point(1, 1);
-            this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(20, 20);
-            this.btnExit.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.btnExit.TabIndex = 5;
-            this.btnExit.TabStop = false;
-            this.btnExit.Click += new System.EventHandler(this.pictureBox1_Click);
-            // 
-            // lblRepOutput
-            // 
-            this.lblRepOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblRepOutput.AutoSize = true;
-            this.lblRepOutput.BackColor = System.Drawing.Color.Transparent;
-            this.lblRepOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblRepOutput.ForeColor = System.Drawing.SystemColors.Control;
-            this.lblRepOutput.Location = new System.Drawing.Point(290, 420);
-            this.lblRepOutput.Name = "lblRepOutput";
-            this.lblRepOutput.Size = new System.Drawing.Size(45, 16);
-            this.lblRepOutput.TabIndex = 8;
-            this.lblRepOutput.Text = "label1";
-            this.lblRepOutput.Visible = false;
-            // 
             // label2
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -150,9 +135,9 @@
             this.label2.ForeColor = System.Drawing.Color.Yellow;
             this.label2.Location = new System.Drawing.Point(17, 300);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(223, 29);
+            this.label2.Size = new System.Drawing.Size(282, 29);
             this.label2.TabIndex = 7;
-            this.label2.Text = "Tech Repair Output";
+            this.label2.Text = "Tech Daily Repair Output";
             // 
             // grdBKSum
             // 
@@ -197,11 +182,11 @@
             // 
             this.lblBKSTotalRows.AutoSize = true;
             this.lblBKSTotalRows.BackColor = System.Drawing.Color.Transparent;
-            this.lblBKSTotalRows.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblBKSTotalRows.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblBKSTotalRows.ForeColor = System.Drawing.SystemColors.Control;
-            this.lblBKSTotalRows.Location = new System.Drawing.Point(407, 153);
+            this.lblBKSTotalRows.Location = new System.Drawing.Point(432, 151);
             this.lblBKSTotalRows.Name = "lblBKSTotalRows";
-            this.lblBKSTotalRows.Size = new System.Drawing.Size(45, 16);
+            this.lblBKSTotalRows.Size = new System.Drawing.Size(51, 20);
             this.lblBKSTotalRows.TabIndex = 14;
             this.lblBKSTotalRows.Text = "label1";
             // 
@@ -209,11 +194,11 @@
             // 
             this.lblTotalRecordsBKS.AutoSize = true;
             this.lblTotalRecordsBKS.BackColor = System.Drawing.Color.Transparent;
-            this.lblTotalRecordsBKS.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTotalRecordsBKS.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalRecordsBKS.ForeColor = System.Drawing.SystemColors.Control;
-            this.lblTotalRecordsBKS.Location = new System.Drawing.Point(332, 153);
+            this.lblTotalRecordsBKS.Location = new System.Drawing.Point(329, 151);
             this.lblTotalRecordsBKS.Name = "lblTotalRecordsBKS";
-            this.lblTotalRecordsBKS.Size = new System.Drawing.Size(45, 16);
+            this.lblTotalRecordsBKS.Size = new System.Drawing.Size(51, 20);
             this.lblTotalRecordsBKS.TabIndex = 15;
             this.lblTotalRecordsBKS.Text = "label1";
             // 
@@ -221,39 +206,25 @@
             // 
             this.lblTotalPagesBKS.AutoSize = true;
             this.lblTotalPagesBKS.BackColor = System.Drawing.Color.Transparent;
-            this.lblTotalPagesBKS.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTotalPagesBKS.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalPagesBKS.ForeColor = System.Drawing.SystemColors.Control;
-            this.lblTotalPagesBKS.Location = new System.Drawing.Point(266, 153);
+            this.lblTotalPagesBKS.Location = new System.Drawing.Point(263, 151);
             this.lblTotalPagesBKS.Name = "lblTotalPagesBKS";
-            this.lblTotalPagesBKS.Size = new System.Drawing.Size(45, 16);
+            this.lblTotalPagesBKS.Size = new System.Drawing.Size(51, 20);
             this.lblTotalPagesBKS.TabIndex = 16;
             this.lblTotalPagesBKS.Text = "label1";
             // 
-            // lblAllAging
+            // label5
             // 
-            this.lblAllAging.AutoSize = true;
-            this.lblAllAging.BackColor = System.Drawing.Color.Transparent;
-            this.lblAllAging.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAllAging.ForeColor = System.Drawing.SystemColors.Control;
-            this.lblAllAging.Location = new System.Drawing.Point(16, 58);
-            this.lblAllAging.Name = "lblAllAging";
-            this.lblAllAging.Size = new System.Drawing.Size(86, 31);
-            this.lblAllAging.TabIndex = 17;
-            this.lblAllAging.Text = "label1";
-            // 
-            // blbRepOut07
-            // 
-            this.blbRepOut07.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.blbRepOut07.AutoSize = true;
-            this.blbRepOut07.BackColor = System.Drawing.Color.Transparent;
-            this.blbRepOut07.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.blbRepOut07.ForeColor = System.Drawing.SystemColors.Control;
-            this.blbRepOut07.Location = new System.Drawing.Point(19, 420);
-            this.blbRepOut07.Name = "blbRepOut07";
-            this.blbRepOut07.Size = new System.Drawing.Size(45, 16);
-            this.blbRepOut07.TabIndex = 18;
-            this.blbRepOut07.Text = "label1";
-            this.blbRepOut07.Visible = false;
+            this.label5.AutoSize = true;
+            this.label5.BackColor = System.Drawing.Color.Transparent;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.ForeColor = System.Drawing.SystemColors.Control;
+            this.label5.Location = new System.Drawing.Point(16, 58);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(458, 31);
+            this.label5.TabIndex = 17;
+            this.label5.Text = "Days:     1      2     3     4     5     6     7+";
             // 
             // grdTechOutput
             // 
@@ -268,7 +239,7 @@
             this.grdTechOutput.Name = "grdTechOutput";
             this.grdTechOutput.ReadOnly = true;
             this.grdTechOutput.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.grdTechOutput.Size = new System.Drawing.Size(688, 377);
+            this.grdTechOutput.Size = new System.Drawing.Size(339, 377);
             this.grdTechOutput.TabIndex = 19;
             this.grdTechOutput.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.grdTechOutput_CellFormatting);
             // 
@@ -284,16 +255,172 @@
             this.lblTime.Text = "label4";
             this.lblTime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // btnExit
+            // 
+            this.btnExit.BackColor = System.Drawing.Color.Transparent;
+            this.btnExit.Location = new System.Drawing.Point(1, 1);
+            this.btnExit.Name = "btnExit";
+            this.btnExit.Size = new System.Drawing.Size(20, 20);
+            this.btnExit.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.btnExit.TabIndex = 5;
+            this.btnExit.TabStop = false;
+            this.btnExit.Click += new System.EventHandler(this.pictureBox1_Click);
+            // 
+            // btnOpenConf
+            // 
+            this.btnOpenConf.Location = new System.Drawing.Point(679, 29);
+            this.btnOpenConf.Name = "btnOpenConf";
+            this.btnOpenConf.Size = new System.Drawing.Size(25, 25);
+            this.btnOpenConf.TabIndex = 21;
+            this.btnOpenConf.Text = "button1";
+            this.btnOpenConf.UseVisualStyleBackColor = true;
+            this.btnOpenConf.Click += new System.EventHandler(this.btnOpenConf_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.BackColor = System.Drawing.Color.Transparent;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.ForeColor = System.Drawing.SystemColors.Control;
+            this.label4.Location = new System.Drawing.Point(16, 104);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(65, 31);
+            this.label4.TabIndex = 22;
+            this.label4.Text = "Qty:";
+            // 
+            // lblAg1
+            // 
+            this.lblAg1.AutoSize = true;
+            this.lblAg1.BackColor = System.Drawing.Color.Transparent;
+            this.lblAg1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAg1.ForeColor = System.Drawing.Color.Lime;
+            this.lblAg1.Location = new System.Drawing.Point(122, 104);
+            this.lblAg1.Name = "lblAg1";
+            this.lblAg1.Size = new System.Drawing.Size(44, 31);
+            this.lblAg1.TabIndex = 23;
+            this.lblAg1.Text = "00";
+            // 
+            // lblAg2
+            // 
+            this.lblAg2.AutoSize = true;
+            this.lblAg2.BackColor = System.Drawing.Color.Transparent;
+            this.lblAg2.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAg2.ForeColor = System.Drawing.Color.Orange;
+            this.lblAg2.Location = new System.Drawing.Point(176, 104);
+            this.lblAg2.Name = "lblAg2";
+            this.lblAg2.Size = new System.Drawing.Size(44, 31);
+            this.lblAg2.TabIndex = 24;
+            this.lblAg2.Text = "00";
+            // 
+            // lblAg3
+            // 
+            this.lblAg3.AutoSize = true;
+            this.lblAg3.BackColor = System.Drawing.Color.Transparent;
+            this.lblAg3.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAg3.ForeColor = System.Drawing.Color.Orange;
+            this.lblAg3.Location = new System.Drawing.Point(226, 104);
+            this.lblAg3.Name = "lblAg3";
+            this.lblAg3.Size = new System.Drawing.Size(44, 31);
+            this.lblAg3.TabIndex = 25;
+            this.lblAg3.Text = "00";
+            // 
+            // lblAg4
+            // 
+            this.lblAg4.AutoSize = true;
+            this.lblAg4.BackColor = System.Drawing.Color.Transparent;
+            this.lblAg4.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAg4.ForeColor = System.Drawing.Color.Tomato;
+            this.lblAg4.Location = new System.Drawing.Point(276, 104);
+            this.lblAg4.Name = "lblAg4";
+            this.lblAg4.Size = new System.Drawing.Size(44, 31);
+            this.lblAg4.TabIndex = 26;
+            this.lblAg4.Text = "00";
+            // 
+            // lblAg5
+            // 
+            this.lblAg5.AutoSize = true;
+            this.lblAg5.BackColor = System.Drawing.Color.Transparent;
+            this.lblAg5.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAg5.ForeColor = System.Drawing.Color.Tomato;
+            this.lblAg5.Location = new System.Drawing.Point(327, 104);
+            this.lblAg5.Name = "lblAg5";
+            this.lblAg5.Size = new System.Drawing.Size(44, 31);
+            this.lblAg5.TabIndex = 27;
+            this.lblAg5.Text = "00";
+            // 
+            // lblAg6
+            // 
+            this.lblAg6.AutoSize = true;
+            this.lblAg6.BackColor = System.Drawing.Color.Transparent;
+            this.lblAg6.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAg6.ForeColor = System.Drawing.Color.Tomato;
+            this.lblAg6.Location = new System.Drawing.Point(376, 104);
+            this.lblAg6.Name = "lblAg6";
+            this.lblAg6.Size = new System.Drawing.Size(44, 31);
+            this.lblAg6.TabIndex = 28;
+            this.lblAg6.Text = "00";
+            // 
+            // lblAg7
+            // 
+            this.lblAg7.AutoSize = true;
+            this.lblAg7.BackColor = System.Drawing.Color.Transparent;
+            this.lblAg7.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAg7.ForeColor = System.Drawing.Color.Red;
+            this.lblAg7.Location = new System.Drawing.Point(430, 104);
+            this.lblAg7.Name = "lblAg7";
+            this.lblAg7.Size = new System.Drawing.Size(29, 31);
+            this.lblAg7.TabIndex = 29;
+            this.lblAg7.Text = "0";
+            // 
+            // grdTechOutput2
+            // 
+            this.grdTechOutput2.AllowUserToAddRows = false;
+            this.grdTechOutput2.AllowUserToDeleteRows = false;
+            this.grdTechOutput2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.grdTechOutput2.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.grdTechOutput2.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.grdTechOutput2.BackgroundColor = System.Drawing.Color.Black;
+            this.grdTechOutput2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grdTechOutput2.Location = new System.Drawing.Point(362, 332);
+            this.grdTechOutput2.Name = "grdTechOutput2";
+            this.grdTechOutput2.ReadOnly = true;
+            this.grdTechOutput2.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.grdTechOutput2.Size = new System.Drawing.Size(347, 377);
+            this.grdTechOutput2.TabIndex = 30;
+            this.grdTechOutput2.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.grdTechOutput_CellFormatting);
+            // 
+            // lblTechOutTotalRows
+            // 
+            this.lblTechOutTotalRows.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblTechOutTotalRows.AutoSize = true;
+            this.lblTechOutTotalRows.BackColor = System.Drawing.Color.Transparent;
+            this.lblTechOutTotalRows.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTechOutTotalRows.ForeColor = System.Drawing.SystemColors.Control;
+            this.lblTechOutTotalRows.Location = new System.Drawing.Point(305, 307);
+            this.lblTechOutTotalRows.Name = "lblTechOutTotalRows";
+            this.lblTechOutTotalRows.Size = new System.Drawing.Size(51, 20);
+            this.lblTechOutTotalRows.TabIndex = 31;
+            this.lblTechOutTotalRows.Text = "label1";
+            // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1261, 721);
+            this.Controls.Add(this.lblTechOutTotalRows);
+            this.Controls.Add(this.grdTechOutput2);
+            this.Controls.Add(this.lblAg7);
+            this.Controls.Add(this.lblAg6);
+            this.Controls.Add(this.lblAg5);
+            this.Controls.Add(this.lblAg4);
+            this.Controls.Add(this.lblAg3);
+            this.Controls.Add(this.lblAg2);
+            this.Controls.Add(this.lblAg1);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.btnOpenConf);
             this.Controls.Add(this.lblTime);
-            this.Controls.Add(this.blbRepOut07);
-            this.Controls.Add(this.lblRepOutput);
-            this.Controls.Add(this.lblAllAging);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.lblTotalPagesBKS);
             this.Controls.Add(this.lblTotalRecordsBKS);
             this.Controls.Add(this.lblBKSTotalRows);
@@ -312,9 +439,10 @@
             this.Text = "Information Board";
             this.Load += new System.EventHandler(this.mainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.grdRepair)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.btnExit)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grdBKSum)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grdTechOutput)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnExit)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.grdTechOutput2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -329,7 +457,6 @@
         private System.Windows.Forms.Label lblTotalRecords;
         private System.Windows.Forms.Label lblTotalRows;
         private System.Windows.Forms.PictureBox btnExit;
-        private System.Windows.Forms.Label lblRepOutput;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.DataGridView grdBKSum;
         private System.Windows.Forms.Label label1;
@@ -337,10 +464,20 @@
         private System.Windows.Forms.Label lblBKSTotalRows;
         private System.Windows.Forms.Label lblTotalRecordsBKS;
         private System.Windows.Forms.Label lblTotalPagesBKS;
-        private System.Windows.Forms.Label lblAllAging;
-        private System.Windows.Forms.Label blbRepOut07;
+        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.DataGridView grdTechOutput;
         private System.Windows.Forms.Label lblTime;
+        private System.Windows.Forms.Button btnOpenConf;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label lblAg1;
+        private System.Windows.Forms.Label lblAg2;
+        private System.Windows.Forms.Label lblAg3;
+        private System.Windows.Forms.Label lblAg4;
+        private System.Windows.Forms.Label lblAg5;
+        private System.Windows.Forms.Label lblAg6;
+        private System.Windows.Forms.Label lblAg7;
+        private System.Windows.Forms.DataGridView grdTechOutput2;
+        private System.Windows.Forms.Label lblTechOutTotalRows;
     }
 }
 

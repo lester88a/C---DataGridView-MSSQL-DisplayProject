@@ -13,7 +13,9 @@ namespace DisPlay
         //delcare all objects/ variables
         private string connectionString;
         private DataViewManager dataViewManager;
+        private DataViewManager dataViewManager2;
         private DataSet dataSet;
+        private DataSet dataSet2;
         private SqlConnection connection;
 
         private int pgSize = 20;
@@ -41,11 +43,13 @@ namespace DisPlay
             this.grdRepair.AllowUserToAddRows = false;
             this.grdBKSum.AllowUserToAddRows = false;
             this.grdTechOutput.AllowUserToAddRows = false;
+            this.grdTechOutput2.AllowUserToAddRows = false;
             //hide the row header
             this.grdRepair.RowHeadersVisible = false;
             this.grdBKSum.RowHeadersVisible = false;
             this.grdTechOutput.RowHeadersVisible = false;
-            
+            this.grdTechOutput2.RowHeadersVisible = false;
+
             //change the label color
             lblTotalRecords.ForeColor = Color.FromArgb(200, 180, 26);
             lblTotalPages.ForeColor = Color.FromArgb(200, 180, 26);
@@ -53,6 +57,7 @@ namespace DisPlay
             lblTotalRecordsBKS.ForeColor = Color.FromArgb(200, 180, 26);
             lblTotalPagesBKS.ForeColor = Color.FromArgb(200, 180, 26);
             lblBKSTotalRows.ForeColor = Color.FromArgb(200, 180, 26);
+            lblTechOutTotalRows.ForeColor = Color.FromArgb(200, 180, 26);
             //change the font of gridview content
             this.grdRepair.DefaultCellStyle.Font = new Font("Tahoma", 27);
             this.grdRepair.DefaultCellStyle.ForeColor = Color.FromArgb(200, 180, 26);
@@ -94,6 +99,19 @@ namespace DisPlay
             //center the content data of gridview
             this.grdTechOutput.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
+            //change the font of grdTechOutput
+            this.grdTechOutput2.ColumnHeadersDefaultCellStyle.Font = new Font("Tahoma", 12, FontStyle.Bold);
+            this.grdTechOutput2.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(200, 180, 26);
+            this.grdTechOutput2.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(0, 0, 0);
+            //change the font of gridview content
+            this.grdTechOutput2.DefaultCellStyle.Font = new Font("Tahoma", 18);
+            this.grdTechOutput2.DefaultCellStyle.ForeColor = Color.FromArgb(200, 180, 26);
+            this.grdTechOutput2.DefaultCellStyle.BackColor = Color.FromArgb(0, 0, 0);
+            //center the header data of grdTechOutput gridview
+            this.grdTechOutput2.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            //center the content data of gridview
+            this.grdTechOutput2.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
             //unselect data at the beginning
             grdRepair.DefaultCellStyle.SelectionBackColor = grdRepair.DefaultCellStyle.BackColor;
             grdRepair.DefaultCellStyle.SelectionForeColor = grdRepair.DefaultCellStyle.ForeColor;
@@ -103,6 +121,9 @@ namespace DisPlay
 
             grdTechOutput.DefaultCellStyle.SelectionBackColor = grdTechOutput.DefaultCellStyle.BackColor;
             grdTechOutput.DefaultCellStyle.SelectionForeColor = grdTechOutput.DefaultCellStyle.ForeColor;
+
+            grdTechOutput2.DefaultCellStyle.SelectionBackColor = grdTechOutput.DefaultCellStyle.BackColor;
+            grdTechOutput2.DefaultCellStyle.SelectionForeColor = grdTechOutput.DefaultCellStyle.ForeColor;
 
             //set up current date format
             currentDate = DateTime.Now.ToString("MM/dd/yyy");
@@ -117,7 +138,7 @@ namespace DisPlay
         }
 
         //form load
-
+        //setup digital clock
         private void mainForm_Load(object sender, EventArgs e)
         {
             _Timer.Interval = 1000;
@@ -131,9 +152,9 @@ namespace DisPlay
 
         private void GetTechRepairOutputData()
         {
-            getAllTechOutput(this.pgSizeTech * 1);
+            getAllTechOutput();
             MyTimerTech = new Timer();
-            MyTimerTech.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimerTech.Interval = (30 * 60 * 1000); // 30 minutes
             MyTimerTech.Tick += new EventHandler(MyTimer_Tick_Get_Tech_Top_2); //get the next 15 data
             MyTimerTech.Start();
         }
@@ -142,7 +163,7 @@ namespace DisPlay
         {
             getBackOrderSum(this.pgSizeBKS * 1);
             MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimerBKS.Interval = (1 * 10 * 1000); // 5 seconds
             MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_2); //get the next 15 data
             MyTimerBKS.Start();
         }
@@ -152,7 +173,7 @@ namespace DisPlay
             //get first 20 data when app starts
             getData(this.pgSize * 1);
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 5 seconds
             MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_40); //get the next 20 data
             MyTimer.Start();
         }
@@ -194,12 +215,28 @@ namespace DisPlay
             {
                 foreach (DataGridViewRow row in grdTechOutput.Rows)
                 {
-                    if ((int)row.Cells["Total"].Value <= 1)
+                    if ((int)row.Cells["Total"].Value <= 5)
                     {
                         row.DefaultCellStyle.ForeColor = Color.Red;
                         
                     }
-                    else if ((int)row.Cells["Total"].Value >= 5)
+                    else if ((int)row.Cells["Total"].Value >= 10)
+                    {
+                        row.DefaultCellStyle.ForeColor = Color.Lime;
+                    }
+                    else
+                    {
+                        row.DefaultCellStyle.ForeColor = Color.FromArgb(200, 180, 26);
+                    }
+                }
+                foreach (DataGridViewRow row in grdTechOutput2.Rows)
+                {
+                    if ((int)row.Cells["Total"].Value <= 5)
+                    {
+                        row.DefaultCellStyle.ForeColor = Color.Red;
+
+                    }
+                    else if ((int)row.Cells["Total"].Value >= 10)
                     {
                         row.DefaultCellStyle.ForeColor = Color.Lime;
                     }
@@ -239,9 +276,9 @@ namespace DisPlay
             }
 
         }
-
+        
         //getAllTechOutput
-        private void getAllTechOutput(int total)
+        private void getAllTechOutput()
         {
             //sign the connection string value
             connectionString = "Data Source=ESDB;Initial Catalog=EasyDB;Integrated Security=True";
@@ -255,34 +292,64 @@ namespace DisPlay
 
                 //create the DataSet
                 dataSet = new DataSet("priDev");
-                string cmd = @"SELECT TOP " + total + @" FirstName+' '+LastName as Technician,count(FirstName + LastName) as Total
-                            FROM tblRepair JOIN tblUser ON LastTechnician = UserName 
-                            where (DateFinish >= '05/20/2016 07:00:00' AND DateFinish < '05/20/2016 20:00:00')  
+                dataSet2 = new DataSet("priDev2");
+                string cmd = @"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+                            BEGIN TRANSACTION;
+                            SELECT LastTechnician as Technician,count(LastTechnician) as Total
+                            FROM tblRepair  
+                            where (DateFinish >= '" + currentDate + @" 07:00:00' AND DateFinish < '" + currentDate + @" 22:00:00')  
                             and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 
                             AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') 
                             and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868' and DealerID != '7595') 
-                            and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I' and Status != 'B') 
-                            GROUP BY FirstName, LastName ORDER BY Total DESC, LastName";
+                            and (Status != 'X') 
+                            GROUP BY LastTechnician ORDER BY Total DESC, LastTechnician
+                            OFFSET 0 ROWS
+                            FETCH NEXT 10 ROWS ONLY";
+                string cmd2 = @"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+                            BEGIN TRANSACTION;
+                            SELECT LastTechnician as Technician,count(LastTechnician) as Total
+                            FROM tblRepair  
+                            where (DateFinish >= '" + currentDate + @" 07:00:00' AND DateFinish < '" + currentDate + @" 22:00:00')  
+                            and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 
+                            AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') 
+                            and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868' and DealerID != '7595') 
+                            and (Status != 'X') 
+                            GROUP BY LastTechnician ORDER BY Total DESC, LastTechnician
+                            OFFSET 10 ROWS
+                            FETCH NEXT 10 ROWS ONLY";
 
                 //Fill the dataset with tblRepair, map the default table "Table" to "tblRepair"
                 SqlDataAdapter dataAdapter1 = new SqlDataAdapter(cmd, connection);
-
+                SqlDataAdapter dataAdapter2 = new SqlDataAdapter(cmd2, connection);
+                //set CommandTimeout to 0 in order to solve the SqlException: Timeout expired issues
+                dataAdapter1.SelectCommand.CommandTimeout = 0; 
+                dataAdapter2.SelectCommand.CommandTimeout = 0;
                 //map
                 dataAdapter1.TableMappings.Add("Table", "tblRepair");
+                dataAdapter2.TableMappings.Add("Table", "tblRepair");
 
                 //fill the dataAdapter
                 dataAdapter1.Fill(dataSet);
+                dataAdapter2.Fill(dataSet2);
 
                 //asign the detault view manage from dataset to dsView
                 dataViewManager = dataSet.DefaultViewManager;
+                dataViewManager2 = dataSet2.DefaultViewManager;
 
                 //grid data binding
                 grdTechOutput.DataSource = dataViewManager;
                 grdTechOutput.DataMember = "tblRepair";
 
+                grdTechOutput2.DataSource = dataViewManager2;
+                grdTechOutput2.DataMember = "tblRepair";
+
+                /**************pagenation********************************************/
+                
+                lblTechOutTotalRows.Text = "Total outputs: " + TotalRowsTech().ToString();
+
                 /**************scrooling********************************************/
                 //scrool down to buttom
-                grdTechOutput.FirstDisplayedScrollingRowIndex = grdTechOutput.RowCount - 1;
+                //grdTechOutput.FirstDisplayedScrollingRowIndex = grdTechOutput.RowCount - 1;
 
                 //close the connection
                 connection.Close();
@@ -293,7 +360,7 @@ namespace DisPlay
                 MessageBox.Show(er.ToString());
             }
         }
-
+        
         //getBackOrderSum
         private void getBackOrderSum(int total)
         {
@@ -316,7 +383,8 @@ namespace DisPlay
 
                 //Fill the dataset with tblRepair, map the default table "Table" to "tblRepair"
                 SqlDataAdapter dataAdapter1 = new SqlDataAdapter("select TOP " + total + "RefNumber as Ref#, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868' and DealerID != '7595') and (Status = 'B') group by RefNumber, DateIn, LastTechnician order by AGING DESC", connection);
-
+                //set CommandTimeout to 0
+                dataAdapter1.SelectCommand.CommandTimeout = 0;
                 //map
                 dataAdapter1.TableMappings.Add("Table", "tblRepair");
 
@@ -340,12 +408,8 @@ namespace DisPlay
                 CalculateTotalPagesBKS();
                 lblTotalPagesBKS.Text = "Page: " + totalPage.ToString();
                 lblTotalRecordsBKS.Text = "On: " + rowCount.ToString() + " Rds.";
-                lblAllAging.Text = getAllAGING();
-                /**************Hide time output****************************************/
-                //lblRepOutput.Text = GetAllTechs2PMorMore();
-                //blbRepOut07.Text = GetAllTechs07To10AM();
-                /*********************************************************************/
-               
+                getAllAGING();
+                
                 //close the connection
                 connection.Close();
 
@@ -380,7 +444,8 @@ namespace DisPlay
                 
                 //Fill the dataset with tblRepair, map the default table "Table" to "tblRepair"
                 SqlDataAdapter dataAdapter1 = new SqlDataAdapter("select TOP " + total + "RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868' and DealerID != '7595') and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I' and Status != 'B') group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ", connection);
-                
+                //set CommandTimeout to 0
+                dataAdapter1.SelectCommand.CommandTimeout = 0;
                 //map
                 dataAdapter1.TableMappings.Add("Table", "tblRepair");
 
@@ -418,7 +483,12 @@ namespace DisPlay
         {
             string stmt = @"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
                             BEGIN TRANSACTION;
-                            select COUNT(*) from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 AND (SVP != 'KCC' AND SVP != 'TCC') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I' and Status != 'B')";
+                            select COUNT(*) from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) 
+                            and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 
+                            AND (SVP != 'KCC' AND SVP != 'TCC') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' 
+                            and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' 
+                            and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') and (Status != 'X' 
+                            and Status != 'C'and Status != 'E' and Status != 'I' and Status != 'B')";
             int count = 0;
 
             using (SqlConnection thisConnection = new SqlConnection("Data Source=ESDB;Initial Catalog=EasyDB;Integrated Security=True"))
@@ -426,6 +496,7 @@ namespace DisPlay
                 using (SqlCommand cmdCount = new SqlCommand(stmt, thisConnection))
                 {
                     thisConnection.Open();
+                    cmdCount.CommandTimeout = 0;
                     count = (int)cmdCount.ExecuteScalar();
                 }
             }
@@ -445,58 +516,38 @@ namespace DisPlay
                 using (SqlCommand cmdCount = new SqlCommand(stmt, thisConnection))
                 {
                     thisConnection.Open();
+                    cmdCount.CommandTimeout = 0;
                     count = (int)cmdCount.ExecuteScalar();
                 }
             }
             return count;
         }
-        public string GetAllTechs07To10AM()
+        //get the total rows for tech output
+        public int TotalRowsTech()
         {
-            string stmt = @"SELECT +FirstName+' '+LastName,count(FirstName + LastName) as Total
-                            FROM tblRepair JOIN tblUser ON LastTechnician = UserName 
-                            where (DateFinish >= '" + currentDate + " 07:00:00' AND DateFinish < '" + currentDate + " 10:00:00')  and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868' and DealerID != '7595') and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I' and Status != 'B') GROUP BY FirstName, LastName ORDER BY Total DESC, LastName";
+            string stmt = @"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+                            BEGIN TRANSACTION;
+                            SELECT count (*) FROM tblRepair  
+                            where (DateFinish >= '" + currentDate + @" 07:00:00' AND DateFinish < '" + currentDate + @" 22:00:00')  
+                            and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 
+                            AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') 
+                            and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868' and DealerID != '7595') 
+                            and (Status != 'X')";
+            int count = 0;
 
-            string resultAging = "07:00AM - 10:00AM\n";
             using (SqlConnection thisConnection = new SqlConnection("Data Source=ESDB;Initial Catalog=EasyDB;Integrated Security=True"))
             {
                 using (SqlCommand cmdCount = new SqlCommand(stmt, thisConnection))
                 {
                     thisConnection.Open();
-                    SqlDataReader reader = cmdCount.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        resultAging += "" + reader[0].ToString() + "     \t\t\t\t";
-                        resultAging += reader[1].ToString() + "     \n";
-                    }
+                    cmdCount.CommandTimeout = 0;
+                    count = (int)cmdCount.ExecuteScalar();
                 }
             }
-            return resultAging;
+            return count;
         }
-        public string GetAllTechs2PMorMore()
-        {
-            string stmt = @"SELECT +FirstName+' '+LastName,count(FirstName + LastName) as Total
-                            FROM tblRepair JOIN tblUser ON LastTechnician = UserName 
-                            where (DateFinish >= '" + currentDate + " 14:00:00' AND DateFinish < '" + currentDate + " 20:00:00')  and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868' and DealerID != '7595') and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I' and Status != 'B') GROUP BY FirstName, LastName ORDER BY Total DESC, LastName";
-            
-            string resultAging = "14:00PM - 20:00PM\n";
-            using (SqlConnection thisConnection = new SqlConnection("Data Source=ESDB;Initial Catalog=EasyDB;Integrated Security=True"))
-            {
-                using (SqlCommand cmdCount = new SqlCommand(stmt, thisConnection))
-                {
-                    thisConnection.Open();
-                    SqlDataReader reader = cmdCount.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        resultAging += "" + reader[0].ToString() + "     \t\t\t\t";
-                        resultAging += reader[1].ToString() + "     \n";
-                    }
-                }
-            }
-            return resultAging;
-        }
-
         //get string of AGING
-        public string getAllAGING()
+        public void getAllAGING()
         {
             string stmt = @"select FirstSet.Day1, SecondSet.Day2, ThirdSet.Day3, Four.Day4, Five.Day5, Six.Day6, Seven.Day7 from 
 	                        (select COUNT(Day1.AGING) as Day1 from 
@@ -513,7 +564,7 @@ namespace DisPlay
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day2 
-		                        where Day2.AGING =2) as SecondSet on FirstSet.Day1 != SecondSet.Day2
+		                        where Day2.AGING =2) as SecondSet on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
                         inner join 
 	                        (select COUNT(Day3.AGING) as Day3 from 
 		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
@@ -521,7 +572,7 @@ namespace DisPlay
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day3 
-		                        where Day3.AGING =3) as ThirdSet on FirstSet.Day1 != SecondSet.Day2
+		                        where Day3.AGING =3) as ThirdSet on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
                         inner join 
 	                        (select COUNT(Day4.AGING) as Day4 from 
 		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
@@ -529,7 +580,7 @@ namespace DisPlay
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day4 
-		                        where Day4.AGING =4) as Four on FirstSet.Day1 != SecondSet.Day2
+		                        where Day4.AGING =4) as Four on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
                         inner join 
 	                        (select COUNT(Day5.AGING) as Day5 from 
 		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
@@ -537,7 +588,7 @@ namespace DisPlay
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day5 
-		                        where Day5.AGING =5) as Five on FirstSet.Day1 != SecondSet.Day2
+		                        where Day5.AGING =5) as Five on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
                         inner join 
 	                        (select COUNT(Day6.AGING) as Day6 from 
 		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
@@ -545,7 +596,7 @@ namespace DisPlay
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day6 
-		                        where Day6.AGING =6) as Six on FirstSet.Day1 != SecondSet.Day2
+		                        where Day6.AGING =6) as Six on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
                         inner join 
 	                        (select COUNT(Day7.AGING) as Day7 from 
 		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
@@ -553,44 +604,40 @@ namespace DisPlay
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day7 
-		                        where Day7.AGING >=7) as Seven on FirstSet.Day1 != SecondSet.Day2";
-            string resultAging = "";
+		                        where Day7.AGING >=7) as Seven on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2";
+            
             using (SqlConnection thisConnection = new SqlConnection("Data Source=ESDB;Initial Catalog=EasyDB;Integrated Security=True"))
             {
                 using (SqlCommand cmdCount = new SqlCommand(stmt, thisConnection))
                 {
                     thisConnection.Open();
+                    cmdCount.CommandTimeout = 0;
                     SqlDataReader reader = cmdCount.ExecuteReader();
                     if (reader.HasRows)
                     {
                         while (reader.Read())
                         {
-                            resultAging += "Days:     1      2     3     4     5     6     7" + "+" + "\n";
-                            resultAging += "QTY:    " + reader[0].ToString() + "     ";
-                            resultAging += reader[1].ToString() + "     ";
-                            resultAging += reader[2].ToString() + "     ";
-                            resultAging += reader[3].ToString() + "     ";
-                            resultAging += reader[4].ToString() + "     ";
-                            resultAging += reader[5].ToString() + "     ";
-                            resultAging += reader[6].ToString() + "     ";
+                            lblAg1.Text = reader[0].ToString();
+                            lblAg2.Text = reader[1].ToString();
+                            lblAg3.Text = reader[2].ToString();
+                            lblAg4.Text = reader[3].ToString();
+                            lblAg5.Text = reader[4].ToString();
+                            lblAg6.Text = reader[5].ToString();
+                            lblAg7.Text = reader[6].ToString();
                         }
                     }
-                    else
-                    {
-                        resultAging += "Days:     1      2     3     4     5     6     7" + "+" + "\n";
-                        resultAging += "QTY:    No Data Found.";
-                    }
+                    
                 }
             }
-            return resultAging;
+            
         }
         //MyTimer_Tick_Get_Tech_Top_1----------------------Tech
         private void MyTimer_Tick_Get_Tech_Top_1(object sender, EventArgs e)
         {
             MyTimerTech.Stop();
-            getAllTechOutput(this.pgSizeTech*1);
+            getAllTechOutput();
             MyTimerTech = new Timer();
-            MyTimerTech.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimerTech.Interval = (30 * 60 * 1000); // 30 minutes
             MyTimerTech.Tick += new EventHandler(MyTimer_Tick_Get_Tech_Top_2);
             MyTimerTech.Start();
         }
@@ -598,28 +645,11 @@ namespace DisPlay
         private void MyTimer_Tick_Get_Tech_Top_2(object sender, EventArgs e)
         {
             MyTimerTech.Stop();
-            getAllTechOutput(this.pgSizeTech * 2);
+            getAllTechOutput();
             MyTimerTech = new Timer();
-            MyTimerTech.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimerTech.Interval = (30 * 60 * 1000); // 30 minutes
             if (TotalRowsBKS() > this.pgSizeTech * 2)
             {
-                MyTimerTech.Tick += new EventHandler(MyTimer_Tick_Get_Tech_Top_3);
-            }
-            else
-            {
-                MyTimerTech.Tick += new EventHandler(MyTimer_Tick_Get_Tech_Top_1);
-            }
-            MyTimerTech.Start();
-        }
-        //MyTimer_Tick_Get_Tech_Top_3----------------------Tech
-        private void MyTimer_Tick_Get_Tech_Top_3(object sender, EventArgs e)
-        {
-            MyTimerTech.Stop();
-            getAllTechOutput(this.pgSizeTech * 3);
-            MyTimerTech = new Timer();
-            MyTimerTech.Interval = (1 * 5 * 1000); // 5 seconds
-            if (TotalRowsBKS() > this.pgSizeTech * 3)
-            {
                 MyTimerTech.Tick += new EventHandler(MyTimer_Tick_Get_Tech_Top_1);
             }
             else
@@ -628,13 +658,14 @@ namespace DisPlay
             }
             MyTimerTech.Start();
         }
+       
         //MyTimer_Tick_Get_BKS_Top_1----------------------BKS
         private void MyTimer_Tick_Get_BKS_Top_1(object sender, EventArgs e)
         {
             MyTimerBKS.Stop();
             getBackOrderSum(this.pgSizeBKS);
             MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
             MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_2);
             MyTimerBKS.Start();
         }
@@ -644,7 +675,7 @@ namespace DisPlay
             MyTimerBKS.Stop();
             getBackOrderSum(this.pgSizeBKS*2);
             MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRowsBKS() > this.pgSizeBKS * 2)
             {
                 MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_3);
@@ -661,7 +692,7 @@ namespace DisPlay
             MyTimerBKS.Stop();
             getBackOrderSum(this.pgSizeBKS * 3);
             MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRowsBKS() > this.pgSizeBKS * 3)
             {
                 //MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_60);
@@ -679,7 +710,7 @@ namespace DisPlay
             MyTimerBKS.Stop();
             getBackOrderSum(this.pgSizeBKS * 4);
             MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRowsBKS() > this.pgSizeBKS * 4)
             {
                 MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_5);
@@ -696,7 +727,7 @@ namespace DisPlay
             MyTimerBKS.Stop();
             getBackOrderSum(this.pgSizeBKS * 5);
             MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRowsBKS() > this.pgSizeBKS * 5)
             {
                 MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_6);
@@ -713,7 +744,7 @@ namespace DisPlay
             MyTimerBKS.Stop();
             getBackOrderSum(this.pgSizeBKS * 6);
             MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRowsBKS() > this.pgSizeBKS * 6)
             {
                 MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
@@ -730,7 +761,7 @@ namespace DisPlay
             MyTimerBKS.Stop();
             getBackOrderSum(this.pgSizeBKS * 7);
             MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRowsBKS() > this.pgSizeBKS * 7)
             {
                 MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_8);
@@ -747,7 +778,7 @@ namespace DisPlay
             MyTimerBKS.Stop();
             getBackOrderSum(this.pgSizeBKS * 8);
             MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRowsBKS() > this.pgSizeBKS * 8)
             {
                 MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_9);
@@ -764,7 +795,7 @@ namespace DisPlay
             MyTimerBKS.Stop();
             getBackOrderSum(this.pgSizeBKS * 9);
             MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRowsBKS() > this.pgSizeBKS * 9)
             {
                 MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_10);
@@ -781,7 +812,7 @@ namespace DisPlay
             MyTimerBKS.Stop();
             getBackOrderSum(this.pgSizeBKS * 10);
             MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRowsBKS() > this.pgSizeBKS * 10)
             {
                 MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
@@ -798,7 +829,7 @@ namespace DisPlay
             MyTimer.Stop();
             getData(20);
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_40);
             MyTimer.Start();
         }
@@ -809,7 +840,7 @@ namespace DisPlay
             MyTimer.Stop();
             getData(40);
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 40)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_60);
@@ -828,7 +859,7 @@ namespace DisPlay
             getData(60);
             getBackOrderSum(60);
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 60)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_80);
@@ -845,7 +876,7 @@ namespace DisPlay
             MyTimer.Stop();
             getData(80);
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 80)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_100);
@@ -863,7 +894,7 @@ namespace DisPlay
             getData(100);
             //rowCount = dataSet.Tables["tblRepair"].Rows.Count;
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 100)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_120);
@@ -881,7 +912,7 @@ namespace DisPlay
             getData(120);
             
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 120)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_140);
@@ -899,7 +930,7 @@ namespace DisPlay
             getData(140);
             
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 140)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_160);
@@ -917,7 +948,7 @@ namespace DisPlay
             MyTimer.Stop();
             getData(160);
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 160)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_180);
@@ -934,7 +965,7 @@ namespace DisPlay
             MyTimer.Stop();
             getData(180);
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 180)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_200);
@@ -951,7 +982,7 @@ namespace DisPlay
             MyTimer.Stop();
             getData(200);
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 200)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_220);
@@ -968,7 +999,7 @@ namespace DisPlay
             MyTimer.Stop();
             getData(220);
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 220)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_240);
@@ -985,7 +1016,7 @@ namespace DisPlay
             MyTimer.Stop();
             getData(240);
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 240)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_260);
@@ -1002,7 +1033,7 @@ namespace DisPlay
             MyTimer.Stop();
             getData(260);
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 260)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_280);
@@ -1019,7 +1050,7 @@ namespace DisPlay
             MyTimer.Stop();
             getData(280);
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 280)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_300);
@@ -1036,7 +1067,7 @@ namespace DisPlay
             MyTimer.Stop();
             getData(300);
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 300)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_320);
@@ -1053,7 +1084,7 @@ namespace DisPlay
             MyTimer.Stop();
             getData(320);
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 320)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_340);
@@ -1071,7 +1102,7 @@ namespace DisPlay
             getData(340);
             
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 340)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_360);
@@ -1089,7 +1120,7 @@ namespace DisPlay
             getData(360);
             
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 360)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_380);
@@ -1107,7 +1138,7 @@ namespace DisPlay
             getData(380);
             
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 380)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_400);
@@ -1125,7 +1156,7 @@ namespace DisPlay
             getData(400);
             
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRows() > 400)
             {
                 MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_420);
@@ -1142,10 +1173,19 @@ namespace DisPlay
             MyTimer.Stop();
             getData(420);
             MyTimer = new Timer();
-            MyTimer.Interval = (1 * 5 * 1000); // 5 seconds
+            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
             MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
             MyTimer.Start();
         }
-
+        //open configuration panel
+        private void btnOpenConf_Click(object sender, EventArgs e)
+        {
+            var frm = new ConfForm();
+            frm.Location = this.Location;
+            frm.StartPosition = FormStartPosition.CenterScreen;
+            frm.FormClosing += delegate { this.Show(); };
+            frm.Show();
+            this.Hide();
+        }
     }
 }

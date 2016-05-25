@@ -16,7 +16,11 @@ namespace DisPlay
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new mainForm());
+            //Application.Run(new mainForm());
+            SplashForm.ShowSplashScreen();
+            mainForm mainForm = new mainForm(); //this takes ages
+            SplashForm.CloseForm();
+            Application.Run(mainForm);
         }
     }
 }
