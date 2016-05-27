@@ -17,11 +17,8 @@ namespace DisPlay
         private DataViewManager dataViewManager;
         private DataSet dataSet;
         private SqlConnection connection;
-        //public variables
-        public string manufacture;
-        public int pgSizePD;
-        public int pgSizeBKS;
-        public int pgSizeTech;
+        //private variables
+        private string manufacture;
 
         public ConfForm()
         {
@@ -32,7 +29,7 @@ namespace DisPlay
             try
             {
                 //sign the connection string value
-                connectionString = "Data Source=ESDB;Initial Catalog=EasyDB;Integrated Security=True";
+                connectionString = "Data Source=ESDB-TST;Initial Catalog=EasyReportDB;Integrated Security=True";
                 //create a new sql connection and put he connection string on it
                 connection = new SqlConnection(connectionString);
                 connection.Open();
@@ -43,35 +40,48 @@ namespace DisPlay
             }
             /**************************************************************************/
 
+            lblStatus.Text = "Please wait several minutes while click Ok button.";
             //get Manufacture data
             getManufactureData();
+            
         }
 
         //cancel btn to return the main form
         private void btnConfCancel_Click(object sender, EventArgs e)
         {
-            var frm = new mainForm();
-            frm.Location = this.Location;
-            frm.StartPosition = FormStartPosition.Manual;
-            frm.FormClosing += delegate { this.Show(); };
-            frm.Show();
-            this.Hide();
+            Application.Exit();
         }
 
+        //ok btn to get into the main form
+        private void btnConfOk_Click(object sender, EventArgs e)
+        {
+            
+            //assign values
+            string mm = (string)cmboxManufacture.SelectedValue;
+            if (mm != "" || mm != null)
+            {
+                manufacture = mm;
+                //lblStatus.Text = "Status: Manufacture " + manufacture + "selected, application is loadding data.\nplease wait several minutes.";
+                mainForm mainForm = new mainForm(manufacture);
+                this.Hide();
+                mainForm.Show();
+            }
+            else
+            {
+                MessageBox.Show("NO data selected!");
+            }
+        }
         //get manufacture info
         private void getManufactureData()
         {
-            cmboxPriorityDevices.SelectedIndex = 5;
-            cmboxBKS.SelectedIndex = 1;
-            cmboxTech.SelectedIndex = 0;
             try
             {
                 //create the DataSet
                 dataSet = new DataSet("priDev");
-                string cmd = @"select Manufacturer from tblRepair group by Manufacturer having count(distinct(Manufacturer)) >=1 and Manufacturer !=''";
+                string cmd = @"select Manufacturer from tblManufacturer";
                 //Fill the dataset with tblRepair, map the default table "Table" to "tblRepair"
                 SqlDataAdapter dataAdapter1 = new SqlDataAdapter(cmd, connection);
-
+                dataAdapter1.SelectCommand.CommandTimeout = 0;
                 //map
                 dataAdapter1.TableMappings.Add("Table", "tblRepair");
 
@@ -95,16 +105,6 @@ namespace DisPlay
             }
             
         }
-
-        private string setManufacture()
-        {
-            //assign values
-            var manufactures = cmboxPriorityDevices.SelectedValue.ToString();
-            foreach (var item in manufactures)
-            {
-                manufacture = item.ToString();
-            }
-            return manufacture;
-        }
+        
     }
 }

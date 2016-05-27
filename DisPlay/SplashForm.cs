@@ -43,7 +43,16 @@ namespace DisPlay
 
         static public void CloseForm()
         {
-            splashForm.Invoke(new CloseDelegate(SplashForm.CloseFormInternal));
+            try
+            {
+                splashForm.Invoke(new CloseDelegate(SplashForm.CloseFormInternal));
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
         }
 
         static private void CloseFormInternal()

@@ -10,6 +10,9 @@ namespace DisPlay
 {
     public partial class mainForm : Form
     {
+        //manufacture variable
+        private string manufacture;
+
         //delcare all objects/ variables
         private string connectionString;
         private DataViewManager dataViewManager;
@@ -32,9 +35,39 @@ namespace DisPlay
         //digital clock variable
         private Timer _Timer = new Timer();
 
-        public mainForm()
+        public mainForm(string manuf)
         {
             InitializeComponent();
+            //get manufacture
+            manufacture = manuf;
+            if (manufacture == "SAMSUNG")
+            {
+                pictureBox.Image = Properties.Resources.samsung;
+            }
+            else if (manufacture == "LG")
+            {
+                pictureBox.Image = Properties.Resources.lg;
+            }
+            else if (manufacture == "MOTOROLA")
+            {
+                pictureBox.Image = Properties.Resources.motorola;
+            }
+            else if (manufacture == "HUAWEI")
+            {
+                pictureBox.Image = Properties.Resources.huawei;
+            }
+            else if (manufacture == "HTC")
+            {
+                pictureBox.Image = Properties.Resources.htc;
+            }
+            else if (manufacture == "BLACKBERRY")
+            {
+                pictureBox.Image = Properties.Resources.blackberry;
+            }
+            else
+            {
+                lblManufacture.Text = manufacture;
+            }
             //auto full screen
             WindowState = FormWindowState.Maximized;
             //hide title bar
@@ -127,6 +160,8 @@ namespace DisPlay
 
             //set up current date format
             currentDate = DateTime.Now.ToString("MM/dd/yyy");
+            //sign the connection string value
+            connectionString = "Data Source=ESDB-TST;Initial Catalog=EasyReportDB;Integrated Security=True";
 
             //get priority devices info
             GetPriorityDevicesData();
@@ -280,8 +315,7 @@ namespace DisPlay
         //getAllTechOutput
         private void getAllTechOutput()
         {
-            //sign the connection string value
-            connectionString = "Data Source=ESDB;Initial Catalog=EasyDB;Integrated Security=True";
+            
             try
             {
                 /*************************************************************************************
@@ -293,24 +327,22 @@ namespace DisPlay
                 //create the DataSet
                 dataSet = new DataSet("priDev");
                 dataSet2 = new DataSet("priDev2");
-                string cmd = @"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-                            BEGIN TRANSACTION;
+                string cmd = @"
                             SELECT LastTechnician as Technician,count(LastTechnician) as Total
                             FROM tblRepair  
                             where (DateFinish >= '" + currentDate + @" 07:00:00' AND DateFinish < '" + currentDate + @" 22:00:00')  
-                            and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 
+                            and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
                             AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') 
                             and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868' and DealerID != '7595') 
                             and (Status != 'X') 
                             GROUP BY LastTechnician ORDER BY Total DESC, LastTechnician
                             OFFSET 0 ROWS
                             FETCH NEXT 10 ROWS ONLY";
-                string cmd2 = @"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-                            BEGIN TRANSACTION;
+                string cmd2 = @"
                             SELECT LastTechnician as Technician,count(LastTechnician) as Total
                             FROM tblRepair  
                             where (DateFinish >= '" + currentDate + @" 07:00:00' AND DateFinish < '" + currentDate + @" 22:00:00')  
-                            and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 
+                            and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
                             AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') 
                             and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868' and DealerID != '7595') 
                             and (Status != 'X') 
@@ -345,7 +377,7 @@ namespace DisPlay
 
                 /**************pagenation********************************************/
                 
-                lblTechOutTotalRows.Text = "Total outputs: " + TotalRowsTech().ToString();
+                lblTechOutTotalRows.Text = "Total Output: " + TotalRowsTech().ToString();
 
                 /**************scrooling********************************************/
                 //scrool down to buttom
@@ -368,8 +400,6 @@ namespace DisPlay
             int totalRows = TotalRowsBKS();
             //set total rows
             lblBKSTotalRows.Text = "Total Rds: " + totalRows.ToString();
-            //sign the connection string value
-            connectionString = "Data Source=ESDB;Initial Catalog=EasyDB;Integrated Security=True";
             try
             {
                 /*************************************************************************************
@@ -380,9 +410,16 @@ namespace DisPlay
 
                 //create the DataSet
                 dataSet = new DataSet("priDev");
-
+                string cmd = @"select TOP " + total + @"RefNumber as Ref#, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, 
+                             LastTechnician as Technician from tblRepair 
+                             where DateIn between convert(date,DATEADD(day,-60,GETDATE())) 
+                             and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = '" + manufacture + @"' AND 
+                            (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' 
+                            and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' 
+                            and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868' and DealerID != '7595') 
+                            and (Status = 'B') group by RefNumber, DateIn, LastTechnician order by AGING DESC";
                 //Fill the dataset with tblRepair, map the default table "Table" to "tblRepair"
-                SqlDataAdapter dataAdapter1 = new SqlDataAdapter("select TOP " + total + "RefNumber as Ref#, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868' and DealerID != '7595') and (Status = 'B') group by RefNumber, DateIn, LastTechnician order by AGING DESC", connection);
+                SqlDataAdapter dataAdapter1 = new SqlDataAdapter(cmd, connection);
                 //set CommandTimeout to 0
                 dataAdapter1.SelectCommand.CommandTimeout = 0;
                 //map
@@ -401,9 +438,11 @@ namespace DisPlay
 
                 /**************scrooling********************************************/
                 //scrool down to buttom
-                grdBKSum.FirstDisplayedScrollingRowIndex = grdBKSum.RowCount - 1;
-
-
+                if (totalRows>10)
+                {
+                    grdBKSum.FirstDisplayedScrollingRowIndex = grdBKSum.RowCount - 1;
+                }
+                
                 /**************pagenation********************************************/
                 CalculateTotalPagesBKS();
                 lblTotalPagesBKS.Text = "Page: " + totalPage.ToString();
@@ -428,9 +467,6 @@ namespace DisPlay
             //set total rows
             lblTotalRows.Text = "Total Records: " + totalRows.ToString();
 
-            //sign the connection string value
-            connectionString = "Data Source=ESDB;Initial Catalog=EasyDB;Integrated Security=True";
-
             try
             {
                 /*************************************************************************************
@@ -441,9 +477,18 @@ namespace DisPlay
 
                 //create the DataSet
                 dataSet = new DataSet("priDev");
-                
+                string cmd = @"select TOP " + total + @"RefNumber as Ref#, 
+                    convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, 
+                    DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician from tblRepair 
+                    where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) and LastTechnician != '' 
+                    and Manufacturer = '" + manufacture + @"' and Warranty = 1 AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') 
+                    and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' 
+                    and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' 
+                    and DealerID != '132' and DealerID != '6868' and DealerID != '7595') and (Status != 'X' and Status != 'C'and Status != 'E' 
+                    and Status != 'I' and Status != 'B') group by RefNumber, DateIn, LastTechnician, 
+                    FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ";
                 //Fill the dataset with tblRepair, map the default table "Table" to "tblRepair"
-                SqlDataAdapter dataAdapter1 = new SqlDataAdapter("select TOP " + total + "RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868' and DealerID != '7595') and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I' and Status != 'B') group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ", connection);
+                SqlDataAdapter dataAdapter1 = new SqlDataAdapter(cmd, connection);
                 //set CommandTimeout to 0
                 dataAdapter1.SelectCommand.CommandTimeout = 0;
                 //map
@@ -461,9 +506,11 @@ namespace DisPlay
 
                 /**************scrooling********************************************/
                 //scrool down to buttom
-                grdRepair.FirstDisplayedScrollingRowIndex = grdRepair.RowCount - 1;
+                if (totalRows > 10)
+                {
+                    grdRepair.FirstDisplayedScrollingRowIndex = grdRepair.RowCount - 1;
+                }
 
-                
                 /**************pagenation********************************************/
                 CalculateTotalPages();
                 lblTotalPages.Text = "Page: "+totalPage.ToString();
@@ -484,14 +531,14 @@ namespace DisPlay
             string stmt = @"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
                             BEGIN TRANSACTION;
                             select COUNT(*) from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) 
-                            and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 
+                            and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
                             AND (SVP != 'KCC' AND SVP != 'TCC') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' 
                             and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' 
                             and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') and (Status != 'X' 
                             and Status != 'C'and Status != 'E' and Status != 'I' and Status != 'B')";
             int count = 0;
 
-            using (SqlConnection thisConnection = new SqlConnection("Data Source=ESDB;Initial Catalog=EasyDB;Integrated Security=True"))
+            using (SqlConnection thisConnection = new SqlConnection(connectionString))
             {
                 using (SqlCommand cmdCount = new SqlCommand(stmt, thisConnection))
                 {
@@ -508,10 +555,14 @@ namespace DisPlay
         {
             string stmt = @"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
                             BEGIN TRANSACTION;
-                            select COUNT(*) from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' AND (SVP != 'KCC' AND SVP != 'TCC') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') and (Status = 'B')";
+                            select COUNT(*) from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) 
+                            and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = '" + manufacture + @"' AND (SVP != 'KCC' AND SVP != 'TCC') 
+                            and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' 
+                            and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' 
+                            and DealerID != '132' and DealerID != '6868') and (Status = 'B')";
             int count = 0;
 
-            using (SqlConnection thisConnection = new SqlConnection("Data Source=ESDB;Initial Catalog=EasyDB;Integrated Security=True"))
+            using (SqlConnection thisConnection = new SqlConnection(connectionString))
             {
                 using (SqlCommand cmdCount = new SqlCommand(stmt, thisConnection))
                 {
@@ -529,13 +580,13 @@ namespace DisPlay
                             BEGIN TRANSACTION;
                             SELECT count (*) FROM tblRepair  
                             where (DateFinish >= '" + currentDate + @" 07:00:00' AND DateFinish < '" + currentDate + @" 22:00:00')  
-                            and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 
+                            and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
                             AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') 
                             and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868' and DealerID != '7595') 
                             and (Status != 'X')";
             int count = 0;
 
-            using (SqlConnection thisConnection = new SqlConnection("Data Source=ESDB;Initial Catalog=EasyDB;Integrated Security=True"))
+            using (SqlConnection thisConnection = new SqlConnection(connectionString))
             {
                 using (SqlCommand cmdCount = new SqlCommand(stmt, thisConnection))
                 {
@@ -551,62 +602,76 @@ namespace DisPlay
         {
             string stmt = @"select FirstSet.Day1, SecondSet.Day2, ThirdSet.Day3, Four.Day4, Five.Day5, Six.Day6, Seven.Day7 from 
 	                        (select COUNT(Day1.AGING) as Day1 from 
-		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
-		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 
+		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, 
+                                DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
+		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
+                                and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day1 
 		                        where Day1.AGING =1) as FirstSet 
                         inner join 
 	                        (select COUNT(Day2.AGING) as Day2 from 
-		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
-		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 
+		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, 
+                                DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
+		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
+                                and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day2 
 		                        where Day2.AGING =2) as SecondSet on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
                         inner join 
 	                        (select COUNT(Day3.AGING) as Day3 from 
-		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
-		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 
+		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, 
+                                DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
+		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
+                                and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day3 
 		                        where Day3.AGING =3) as ThirdSet on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
                         inner join 
 	                        (select COUNT(Day4.AGING) as Day4 from 
-		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
-		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 
+		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, 
+                                DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
+		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
+                                and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day4 
 		                        where Day4.AGING =4) as Four on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
                         inner join 
 	                        (select COUNT(Day5.AGING) as Day5 from 
-		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
-		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 
+		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, 
+                                DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
+		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
+                                and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day5 
 		                        where Day5.AGING =5) as Five on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
                         inner join 
 	                        (select COUNT(Day6.AGING) as Day6 from 
-		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
-		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 
+		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, 
+                                DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
+		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
+                                and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day6 
 		                        where Day6.AGING =6) as Six on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
                         inner join 
 	                        (select COUNT(Day7.AGING) as Day7 from 
-		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
-		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = 'SAMSUNG' and Warranty = 1 
+		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, 
+                                DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
+		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
+                                and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day7 
 		                        where Day7.AGING >=7) as Seven on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2";
             
-            using (SqlConnection thisConnection = new SqlConnection("Data Source=ESDB;Initial Catalog=EasyDB;Integrated Security=True"))
+            using (SqlConnection thisConnection = new SqlConnection(connectionString))
             {
                 using (SqlCommand cmdCount = new SqlCommand(stmt, thisConnection))
                 {
@@ -1177,15 +1242,6 @@ namespace DisPlay
             MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
             MyTimer.Start();
         }
-        //open configuration panel
-        private void btnOpenConf_Click(object sender, EventArgs e)
-        {
-            var frm = new ConfForm();
-            frm.Location = this.Location;
-            frm.StartPosition = FormStartPosition.CenterScreen;
-            frm.FormClosing += delegate { this.Show(); };
-            frm.Show();
-            this.Hide();
-        }
+        
     }
 }
