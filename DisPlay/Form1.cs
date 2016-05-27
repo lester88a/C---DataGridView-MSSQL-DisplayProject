@@ -10,8 +10,10 @@ namespace DisPlay
 {
     public partial class mainForm : Form
     {
-        //manufacture variable
+        //private variables
         private string manufacture;
+        private string serverName;
+        private string databaseName;
 
         //delcare all objects/ variables
         private string connectionString;
@@ -35,11 +37,15 @@ namespace DisPlay
         //digital clock variable
         private Timer _Timer = new Timer();
 
-        public mainForm(string manuf)
+        public mainForm(string manuf, string serverNa, string databaseNa)
         {
             InitializeComponent();
-            //get manufacture
-            manufacture = manuf;
+            //get manufacture, serverName and databaseName from user input
+            this.manufacture = manuf;
+            this.serverName = serverNa;
+            this.databaseName = databaseNa;
+
+            //set the manufacture logo
             if (manufacture == "SAMSUNG")
             {
                 pictureBox.Image = Properties.Resources.samsung;
@@ -161,7 +167,7 @@ namespace DisPlay
             //set up current date format
             currentDate = DateTime.Now.ToString("MM/dd/yyy");
             //sign the connection string value
-            connectionString = "Data Source=ESDB-TST;Initial Catalog=EasyReportDB;Integrated Security=True";
+            connectionString = "Data Source="+ serverName+";Initial Catalog="+databaseName+";Integrated Security=True";
 
             //get priority devices info
             GetPriorityDevicesData();

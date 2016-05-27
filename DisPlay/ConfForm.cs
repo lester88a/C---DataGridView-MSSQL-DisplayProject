@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Sql;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
@@ -19,6 +20,8 @@ namespace DisPlay
         private SqlConnection connection;
         //private variables
         private string manufacture;
+        private string serverName;
+        private string databaseName;
 
         public ConfForm()
         {
@@ -28,47 +31,72 @@ namespace DisPlay
             /**************************************************************************/
             try
             {
-                //sign the connection string value
-                connectionString = "Data Source=ESDB-TST;Initial Catalog=EasyReportDB;Integrated Security=True";
-                //create a new sql connection and put he connection string on it
-                connection = new SqlConnection(connectionString);
-                connection.Open();
+                //get all server name on network
+                DataTable servers = SqlDataSourceEnumerator.Instance.GetDataSources();
+                for (int i = 0; i < servers.Rows.Count; i++)
+                {
+                    if ((servers.Rows[i]["InstanceName"] as string) != null)
+                    {
+                        cboxSerName.Items.Add(servers.Rows[i]["ServerName"] + "\\" + servers.Rows[i]["InstanceName"]);
+                    }
+                    else
+                    {
+                        cboxSerName.Items.Add(servers.Rows[i]["ServerName"]);
+                    } 
+                }
             }
             catch (Exception er)
             {
                 MessageBox.Show(er.ToString());
             }
             /**************************************************************************/
-
-            lblStatus.Text = "Please wait several minutes while click Ok button.";
-            //get Manufacture data
-            getManufactureData();
-            
+            lblStatus.Text = "Please wait several minutes while click Start button.";
+           
         }
-
-        //cancel btn to return the main form
-        private void btnConfCancel_Click(object sender, EventArgs e)
+        
+        //get all database from server
+        private void btnSetServerName_Click(object sender, EventArgs e)
         {
-            Application.Exit();
-        }
-
-        //ok btn to get into the main form
-        private void btnConfOk_Click(object sender, EventArgs e)
-        {
-            
-            //assign values
-            string mm = (string)cmboxManufacture.SelectedValue;
-            if (mm != "" || mm != null)
+            //assign server name
+            serverName = (string)cboxSerName.SelectedItem;
+            try
             {
-                manufacture = mm;
-                //lblStatus.Text = "Status: Manufacture " + manufacture + "selected, application is loadding data.\nplease wait several minutes.";
-                mainForm mainForm = new mainForm(manufacture);
-                this.Hide();
-                mainForm.Show();
+                using (var con = new SqlConnection("Data Source=" + serverName + "; Integrated Security=True;"))
+                {
+                    con.Open();
+                    DataTable databases = con.GetSchema("Databases");
+                    foreach (DataRow database in databases.Rows)
+                    {
+                        string databaseName = database.Field<String>("database_name");
+                        cboxDatabaseName.Items.Add(databaseName);
+                    }
+                }
             }
-            else
+            catch (Exception er)
             {
-                MessageBox.Show("NO data selected!");
+                MessageBox.Show(er.ToString());
+            }
+        }
+
+        //get all manufacture button
+        private void btnSetDatabase_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                databaseName = (string)cboxDatabaseName.SelectedItem;
+
+                //sign the connection string value
+                connectionString = "Data Source=" + serverName + ";Initial Catalog=" + databaseName + ";Integrated Security=True";
+                //create a new sql connection and put he connection string on it
+                connection = new SqlConnection(connectionString);
+                connection.Open();
+                //get Manufacture data
+                getManufactureData();
+            }
+            catch (Exception er)
+            {
+
+                MessageBox.Show(er.ToString());
             }
         }
         //get manufacture info
@@ -103,7 +131,33 @@ namespace DisPlay
             {
                 MessageBox.Show(er.ToString());
             }
-            
+
+        }
+
+        //ok btn to get into the main form
+        private void btnConfOk_Click(object sender, EventArgs e)
+        {
+
+            //assign manufacture
+            string mm = (string)cmboxManufacture.SelectedValue;
+
+            if ((mm != "" || mm != null) && (serverName != "" || databaseName != null))
+            {
+                manufacture = mm;
+                mainForm mainForm = new mainForm(manufacture, serverName, databaseName);
+                this.Hide();
+                mainForm.Show();
+            }
+            else
+            {
+                MessageBox.Show("NO data selected!");
+            }
+        }
+        
+        //X btn to exit the application
+        private void btnConfCancel_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
         
     }

@@ -23,12 +23,7 @@ namespace DisPlay
             ConfForm confForm = new ConfForm(); //this takes ages
             SplashForm.CloseForm();
             Application.Run(confForm);
-
-            ////second run mian form
-            //SplashForm.ShowSplashScreen();
-            //mainForm mainForm = new mainForm(); //this takes ages
-            //SplashForm.CloseForm();
-            //Application.Run(mainForm);
+            
         }
     }
 }
