@@ -46,36 +46,8 @@ namespace DisPlay
             this.manufacture = manuf;
             this.serverName = serverNa;
             this.databaseName = databaseNa;
-
-            //set the manufacture logo
-            if (manufacture.ToUpper().Contains("SAMSUNG"))
-            {
-                pictureBox.Image = Properties.Resources.samsung;
-            }
-            else if (manufacture.ToUpper() == "LG")
-            {
-                pictureBox.Image = Properties.Resources.lg;
-            }
-            else if (manufacture.ToUpper() == "MOTOROLA")
-            {
-                pictureBox.Image = Properties.Resources.motorola;
-            }
-            else if (manufacture.ToUpper() == "HUAWEI")
-            {
-                pictureBox.Image = Properties.Resources.huawei;
-            }
-            else if (manufacture.ToUpper() == "HTC")
-            {
-                pictureBox.Image = Properties.Resources.htc;
-            }
-            else if (manufacture.ToUpper() == "BLACKBERRY")
-            {
-                pictureBox.Image = Properties.Resources.blackberry;
-            }
-            else
-            {
-                lblManufacture.Text = manufacture;
-            }
+            //call get manufacturer logo method
+            GetManufacturerLogo();
             //auto full screen
             WindowState = FormWindowState.Maximized;
             //hide title bar
@@ -169,7 +141,7 @@ namespace DisPlay
             //set up current date format
             currentDate = DateTime.Now.ToString("MM/dd/yyy");
             //sign the connection string value
-            connectionString = "Data Source="+ serverName+";Initial Catalog="+databaseName+";Integrated Security=True";
+            connectionString = "Data Source=" + serverName + ";Initial Catalog=" + databaseName + ";Integrated Security=True";
             bool exists = IsTabelExists();
             if (exists == true)
             {
@@ -181,6 +153,39 @@ namespace DisPlay
                 GetTechRepairOutputData();
             }
 
+        }
+
+        private void GetManufacturerLogo()
+        {
+            //set the manufacture logo
+            if (manufacture.ToUpper().Contains("SAMSUNG"))
+            {
+                pictureBox.Image = Properties.Resources.samsung;
+            }
+            else if (manufacture.ToUpper() == "LG")
+            {
+                pictureBox.Image = Properties.Resources.lg;
+            }
+            else if (manufacture.ToUpper() == "MOTOROLA")
+            {
+                pictureBox.Image = Properties.Resources.motorola;
+            }
+            else if (manufacture.ToUpper() == "HUAWEI")
+            {
+                pictureBox.Image = Properties.Resources.huawei;
+            }
+            else if (manufacture.ToUpper() == "HTC")
+            {
+                pictureBox.Image = Properties.Resources.htc;
+            }
+            else if (manufacture.ToUpper() == "BLACKBERRY")
+            {
+                pictureBox.Image = Properties.Resources.blackberry;
+            }
+            else
+            {
+                lblManufacture.Text = manufacture.ToUpper();
+            }
         }
 
         //form load
@@ -848,7 +853,14 @@ namespace DisPlay
             getBackOrderSum(this.pgSizeBKS);
             MyTimerBKS = new Timer();
             MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_2);
+            if (TotalRowsBKS() > this.pgSizeBKS * 1)
+            {
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_2);
+            }
+            else
+            {
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+            }
             MyTimerBKS.Start();
         }
         //MyTimer_Tick_Get_BKS_Top_2----------------------BKS
@@ -877,7 +889,6 @@ namespace DisPlay
             MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
             if (TotalRowsBKS() > this.pgSizeBKS * 3)
             {
-                //MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_60);
                 MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_4);
             }
             else
@@ -1012,7 +1023,14 @@ namespace DisPlay
             getData(20);
             MyTimer = new Timer();
             MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_40);
+            if (TotalRows() > 20)
+            {
+                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_40);
+            }
+            else
+            {
+                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+            }
             MyTimer.Start();
         }
 
