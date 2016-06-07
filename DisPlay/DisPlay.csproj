@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Tqu2Hyc.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -98,13 +101,12 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\close_green.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\huawei.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\lg.png" />
@@ -120,6 +122,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\htc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\huawei.png" />
+    <Content Include="Tqu2Hyc.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

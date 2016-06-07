@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Odbc;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -40,33 +41,34 @@ namespace DisPlay
         public mainForm(string manuf, string serverNa, string databaseNa)
         {
             InitializeComponent();
+            this.Text = manuf;
             //get manufacture, serverName and databaseName from user input
             this.manufacture = manuf;
             this.serverName = serverNa;
             this.databaseName = databaseNa;
 
             //set the manufacture logo
-            if (manufacture == "SAMSUNG")
+            if (manufacture.ToUpper().Contains("SAMSUNG"))
             {
                 pictureBox.Image = Properties.Resources.samsung;
             }
-            else if (manufacture == "LG")
+            else if (manufacture.ToUpper() == "LG")
             {
                 pictureBox.Image = Properties.Resources.lg;
             }
-            else if (manufacture == "MOTOROLA")
+            else if (manufacture.ToUpper() == "MOTOROLA")
             {
                 pictureBox.Image = Properties.Resources.motorola;
             }
-            else if (manufacture == "HUAWEI")
+            else if (manufacture.ToUpper() == "HUAWEI")
             {
                 pictureBox.Image = Properties.Resources.huawei;
             }
-            else if (manufacture == "HTC")
+            else if (manufacture.ToUpper() == "HTC")
             {
                 pictureBox.Image = Properties.Resources.htc;
             }
-            else if (manufacture == "BLACKBERRY")
+            else if (manufacture.ToUpper() == "BLACKBERRY")
             {
                 pictureBox.Image = Properties.Resources.blackberry;
             }
@@ -168,13 +170,16 @@ namespace DisPlay
             currentDate = DateTime.Now.ToString("MM/dd/yyy");
             //sign the connection string value
             connectionString = "Data Source="+ serverName+";Initial Catalog="+databaseName+";Integrated Security=True";
-
-            //get priority devices info
-            GetPriorityDevicesData();
-            //get back order summary info
-            GetBackOrderSumData();
-            //get tech repair output info
-            GetTechRepairOutputData();
+            bool exists = IsTabelExists();
+            if (exists == true)
+            {
+                //get priority devices info
+                GetPriorityDevicesData();
+                //get back order summary info
+                GetBackOrderSumData();
+                //get tech repair output info
+                GetTechRepairOutputData();
+            }
 
         }
 
@@ -193,30 +198,76 @@ namespace DisPlay
 
         private void GetTechRepairOutputData()
         {
-            getAllTechOutput();
-            MyTimerTech = new Timer();
-            MyTimerTech.Interval = (30 * 60 * 1000); // 30 minutes
-            MyTimerTech.Tick += new EventHandler(MyTimer_Tick_Get_Tech_Top_2); //get the next 15 data
-            MyTimerTech.Start();
+            bool exists = IsTabelExists();
+            if (exists == true)
+            {
+                getAllTechOutput();
+                MyTimerTech = new Timer();
+                MyTimerTech.Interval = (5 * 60 * 1000); // 5 minutes
+                MyTimerTech.Tick += new EventHandler(MyTimer_Tick_Get_Tech_Top_2); //get the next 15 data
+                MyTimerTech.Start();
+            }
         }
 
         private void GetBackOrderSumData()
         {
-            getBackOrderSum(this.pgSizeBKS * 1);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 5 seconds
-            MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_2); //get the next 15 data
-            MyTimerBKS.Start();
+            bool exists = IsTabelExists();
+            if (exists == true)
+            {
+                getBackOrderSum(this.pgSizeBKS * 1);
+                MyTimerBKS = new Timer();
+                MyTimerBKS.Interval = (1 * 10 * 1000); // 5 seconds
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_2); //get the next 15 data
+                MyTimerBKS.Start();
+            }
         }
 
         private void GetPriorityDevicesData()
         {
-            //get first 20 data when app starts
-            getData(this.pgSize * 1);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 5 seconds
-            MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_40); //get the next 20 data
-            MyTimer.Start();
+            bool exists = IsTabelExists();
+            if (exists == true)
+            {
+                //get first 20 data when app starts
+                getData(this.pgSize * 1);
+                MyTimer = new Timer();
+                MyTimer.Interval = (1 * 10 * 1000); // 5 seconds
+                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_40); //get the next 20 data
+                MyTimer.Start();
+            }
+        }
+        //method for verify the table exists
+        private bool IsTabelExists()
+        {
+            bool exists;
+
+            try
+            {
+                int count;
+                using (SqlConnection thisConnection = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand cmdCount = new SqlCommand("select case when exists((select * from "+databaseName+".information_schema.tables where table_name = 'tblRepair')) then 1 else 0 end", thisConnection))
+                    {
+                        thisConnection.Open();
+                        cmdCount.CommandTimeout = 0;
+                        count = (int)cmdCount.ExecuteScalar();
+                    }
+                }
+                
+                if (count == 1)
+                {
+                    exists = true;
+                }
+                else
+                {
+                    exists = false;
+                }
+            }
+            catch
+            {
+                exists = false;
+            }
+
+            return exists;
         }
 
         //quit the application
@@ -244,8 +295,7 @@ namespace DisPlay
             }
             catch (Exception er)
             {
-
-                MessageBox.Show(er.ToString());
+                //MessageBox.Show(er.ToString());
             }
         }
 
@@ -290,7 +340,7 @@ namespace DisPlay
             catch (Exception er)
             {
 
-                MessageBox.Show(er.ToString());
+                //MessageBox.Show(er.ToString());
             }
         }
         //calculate total pages for priority devices
@@ -321,298 +371,353 @@ namespace DisPlay
         //getAllTechOutput
         private void getAllTechOutput()
         {
-            
-            try
+            bool exists = IsTabelExists();
+            if (exists == true)
             {
-                /*************************************************************************************
-                ************************************************************************************/
-                //create a new sql connection and put he connection string on it
-                connection = new SqlConnection(connectionString);
-                connection.Open();
+                try
+                {
+                    /*************************************************************************************
+                    ************************************************************************************/
+                    //create a new sql connection and put he connection string on it
+                    connection = new SqlConnection(connectionString);
+                    connection.Open();
 
-                //create the DataSet
-                dataSet = new DataSet("priDev");
-                dataSet2 = new DataSet("priDev2");
-                string cmd = @"
+                    //create the DataSet
+                    dataSet = new DataSet("priDev");
+                    dataSet2 = new DataSet("priDev2");
+                    string cmd = @"
                             SELECT LastTechnician as Technician,count(LastTechnician) as Total
                             FROM tblRepair  
                             where (DateFinish >= '" + currentDate + @" 07:00:00' AND DateFinish < '" + currentDate + @" 22:00:00')  
-                            and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
+                             and Manufacturer = '" + manufacture + @"' and Warranty = 1 
                             AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') 
-                            and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868' and DealerID != '7595') 
+                            and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '7595') 
                             and (Status != 'X') 
                             GROUP BY LastTechnician ORDER BY Total DESC, LastTechnician
                             OFFSET 0 ROWS
                             FETCH NEXT 10 ROWS ONLY";
-                string cmd2 = @"
+                    string cmd2 = @"
                             SELECT LastTechnician as Technician,count(LastTechnician) as Total
                             FROM tblRepair  
                             where (DateFinish >= '" + currentDate + @" 07:00:00' AND DateFinish < '" + currentDate + @" 22:00:00')  
-                            and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
+                             and Manufacturer = '" + manufacture + @"' and Warranty = 1 
                             AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') 
-                            and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868' and DealerID != '7595') 
+                            and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '7595') 
                             and (Status != 'X') 
                             GROUP BY LastTechnician ORDER BY Total DESC, LastTechnician
                             OFFSET 10 ROWS
                             FETCH NEXT 10 ROWS ONLY";
 
-                //Fill the dataset with tblRepair, map the default table "Table" to "tblRepair"
-                SqlDataAdapter dataAdapter1 = new SqlDataAdapter(cmd, connection);
-                SqlDataAdapter dataAdapter2 = new SqlDataAdapter(cmd2, connection);
-                //set CommandTimeout to 0 in order to solve the SqlException: Timeout expired issues
-                dataAdapter1.SelectCommand.CommandTimeout = 0; 
-                dataAdapter2.SelectCommand.CommandTimeout = 0;
-                //map
-                dataAdapter1.TableMappings.Add("Table", "tblRepair");
-                dataAdapter2.TableMappings.Add("Table", "tblRepair");
+                    //Fill the dataset with tblRepair, map the default table "Table" to "tblRepair"
+                    SqlDataAdapter dataAdapter1 = new SqlDataAdapter(cmd, connection);
+                    SqlDataAdapter dataAdapter2 = new SqlDataAdapter(cmd2, connection);
+                    //set CommandTimeout to 0 in order to solve the SqlException: Timeout expired issues
+                    dataAdapter1.SelectCommand.CommandTimeout = 0;
+                    dataAdapter2.SelectCommand.CommandTimeout = 0;
+                    //map
+                    dataAdapter1.TableMappings.Add("Table", "tblRepair");
+                    dataAdapter2.TableMappings.Add("Table", "tblRepair");
 
-                //fill the dataAdapter
-                dataAdapter1.Fill(dataSet);
-                dataAdapter2.Fill(dataSet2);
+                    //fill the dataAdapter
+                    dataAdapter1.Fill(dataSet);
+                    dataAdapter2.Fill(dataSet2);
 
-                //asign the detault view manage from dataset to dsView
-                dataViewManager = dataSet.DefaultViewManager;
-                dataViewManager2 = dataSet2.DefaultViewManager;
+                    //asign the detault view manage from dataset to dsView
+                    dataViewManager = dataSet.DefaultViewManager;
+                    dataViewManager2 = dataSet2.DefaultViewManager;
 
-                //grid data binding
-                grdTechOutput.DataSource = dataViewManager;
-                grdTechOutput.DataMember = "tblRepair";
+                    //grid data binding
+                    grdTechOutput.DataSource = dataViewManager;
+                    grdTechOutput.DataMember = "tblRepair";
 
-                grdTechOutput2.DataSource = dataViewManager2;
-                grdTechOutput2.DataMember = "tblRepair";
+                    grdTechOutput2.DataSource = dataViewManager2;
+                    grdTechOutput2.DataMember = "tblRepair";
 
-                /**************pagenation********************************************/
-                
-                lblTechOutTotalRows.Text = "Total Output: " + TotalRowsTech().ToString();
+                    /**************pagenation********************************************/
 
-                /**************scrooling********************************************/
-                //scrool down to buttom
-                //grdTechOutput.FirstDisplayedScrollingRowIndex = grdTechOutput.RowCount - 1;
+                    lblTechOutTotalRows.Text = "Total Output: " + TotalRowsTech().ToString();
 
-                //close the connection
-                connection.Close();
+                    /**************scrooling********************************************/
+                    //scrool down to buttom
+                    //grdTechOutput.FirstDisplayedScrollingRowIndex = grdTechOutput.RowCount - 1;
 
-            }
-            catch (Exception er)
-            {
-                MessageBox.Show(er.ToString());
+                    //close the connection
+                    connection.Close();
+
+                }
+                catch (Exception er)
+                {
+                    //MessageBox.Show(er.ToString());
+                }
             }
         }
         
         //getBackOrderSum
         private void getBackOrderSum(int total)
         {
-            //totalrows variable
-            int totalRows = TotalRowsBKS();
-            //set total rows
-            lblBKSTotalRows.Text = "Total Rds: " + totalRows.ToString();
-            try
+            bool exists = IsTabelExists();
+            if (exists == true)
             {
-                /*************************************************************************************
-                ************************************************************************************/
-                //create a new sql connection and put he connection string on it
-                connection = new SqlConnection(connectionString);
-                connection.Open();
+                try
+                {
+                    //totalrows variable
+                    int totalRows = TotalRowsBKS();
+                    //set total rows
+                    lblBKSTotalRows.Text = "Total Rds: " + totalRows.ToString();
+                    /*************************************************************************************
+                    ************************************************************************************/
+                    //create a new sql connection and put he connection string on it
+                    connection = new SqlConnection(connectionString);
+                    connection.Open();
 
-                //create the DataSet
-                dataSet = new DataSet("priDev");
-                string cmd = @"select TOP " + total + @"RefNumber as Ref#, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, 
+                    //create the DataSet
+                    dataSet = new DataSet("priDev");
+                    string cmd = @"select TOP " + total + @"RefNumber as Ref#, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, 
                              LastTechnician as Technician from tblRepair 
                              where DateIn between convert(date,DATEADD(day,-60,GETDATE())) 
-                             and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = '" + manufacture + @"' AND 
-                            (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' 
+                             and convert(date, GETDATE())  and Manufacturer = '" + manufacture + @"' and Warranty = 1
+                            AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' 
                             and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' 
-                            and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868' and DealerID != '7595') 
+                            and DealerID != '7552' and DealerID != '7551' and DealerID != '7595') 
                             and (Status = 'B') group by RefNumber, DateIn, LastTechnician order by AGING DESC";
-                //Fill the dataset with tblRepair, map the default table "Table" to "tblRepair"
-                SqlDataAdapter dataAdapter1 = new SqlDataAdapter(cmd, connection);
-                //set CommandTimeout to 0
-                dataAdapter1.SelectCommand.CommandTimeout = 0;
-                //map
-                dataAdapter1.TableMappings.Add("Table", "tblRepair");
+                    //Fill the dataset with tblRepair, map the default table "Table" to "tblRepair"
+                    SqlDataAdapter dataAdapter1 = new SqlDataAdapter(cmd, connection);
+                    //set CommandTimeout to 0
+                    dataAdapter1.SelectCommand.CommandTimeout = 0;
+                    //map
+                    dataAdapter1.TableMappings.Add("Table", "tblRepair");
 
-                //fill the dataAdapter
-                dataAdapter1.Fill(dataSet);
+                    //fill the dataAdapter
+                    dataAdapter1.Fill(dataSet);
 
-                //asign the detault view manage from dataset to dsView
-                dataViewManager = dataSet.DefaultViewManager;
+                    //asign the detault view manage from dataset to dsView
+                    dataViewManager = dataSet.DefaultViewManager;
 
-                //grid data binding
-                
-                grdBKSum.DataSource = dataViewManager;
-                grdBKSum.DataMember = "tblRepair";
+                    //grid data binding
 
-                /**************scrooling********************************************/
-                //scrool down to buttom
-                if (totalRows>10)
-                {
-                    grdBKSum.FirstDisplayedScrollingRowIndex = grdBKSum.RowCount - 1;
+                    grdBKSum.DataSource = dataViewManager;
+                    grdBKSum.DataMember = "tblRepair";
+
+                    /**************scrooling********************************************/
+                    //scrool down to buttom
+                    if (totalRows > 10)
+                    {
+                        grdBKSum.FirstDisplayedScrollingRowIndex = grdBKSum.RowCount - 1;
+                    }
+
+                    /**************pagenation********************************************/
+                    CalculateTotalPagesBKS();
+                    lblTotalPagesBKS.Text = "Page: " + totalPage.ToString();
+                    lblTotalRecordsBKS.Text = "On: " + rowCount.ToString() + " Rds.";
+                    getAllAGING();
+
+                    //close the connection
+                    connection.Close();
+
                 }
-                
-                /**************pagenation********************************************/
-                CalculateTotalPagesBKS();
-                lblTotalPagesBKS.Text = "Page: " + totalPage.ToString();
-                lblTotalRecordsBKS.Text = "On: " + rowCount.ToString() + " Rds.";
-                getAllAGING();
-                
-                //close the connection
-                connection.Close();
-
-            }
-            catch (Exception er)
-            {
-                MessageBox.Show(er.ToString());
+                catch (Exception er)
+                {
+                    //MessageBox.Show(er.ToString());
+                }
             }
         }
         
         //connection to db, get all data, assign the data to the datagridview
         private void getData(int total)
         {
-            //totalrows variable
-            int totalRows = TotalRows();
-            //set total rows
-            lblTotalRows.Text = "Total Records: " + totalRows.ToString();
-
-            try
+            bool exists = IsTabelExists();
+            if (exists == true)
             {
-                /*************************************************************************************
-                ************************************************************************************/
-                //create a new sql connection and put he connection string on it
-                connection = new SqlConnection(connectionString);
-                connection.Open();
+                try
+                {
+                    //totalrows variable
+                    int totalRows = TotalRows();
+                    //set total rows
+                    lblTotalRows.Text = "Total Records: " + totalRows.ToString();
 
-                //create the DataSet
-                dataSet = new DataSet("priDev");
-                string cmd = @"select TOP " + total + @"RefNumber as Ref#, 
+                    /*************************************************************************************
+                    ************************************************************************************/
+                    //create a new sql connection and put he connection string on it
+                    connection = new SqlConnection(connectionString);
+                    connection.Open();
+
+                    //create the DataSet
+                    dataSet = new DataSet("priDev");
+                    string cmd = @"select TOP " + total + @"RefNumber as Ref#, 
                     convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, 
                     DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician from tblRepair 
-                    where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) and LastTechnician != '' 
+                    where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE())  
                     and Manufacturer = '" + manufacture + @"' and Warranty = 1 AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') 
                     and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' 
-                    and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' 
-                    and DealerID != '132' and DealerID != '6868' and DealerID != '7595') and (Status != 'X' and Status != 'C'and Status != 'E' 
+                    and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' 
+                    and DealerID != '7595') and (Status != 'X' and Status != 'C'and Status != 'E' 
                     and Status != 'I' and Status != 'B') group by RefNumber, DateIn, LastTechnician, 
                     FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ";
-                //Fill the dataset with tblRepair, map the default table "Table" to "tblRepair"
-                SqlDataAdapter dataAdapter1 = new SqlDataAdapter(cmd, connection);
-                //set CommandTimeout to 0
-                dataAdapter1.SelectCommand.CommandTimeout = 0;
-                //map
-                dataAdapter1.TableMappings.Add("Table", "tblRepair");
+                    //Fill the dataset with tblRepair, map the default table "Table" to "tblRepair"
+                    SqlDataAdapter dataAdapter1 = new SqlDataAdapter(cmd, connection);
+                    //set CommandTimeout to 0
+                    dataAdapter1.SelectCommand.CommandTimeout = 0;
+                    //map
+                    dataAdapter1.TableMappings.Add("Table", "tblRepair");
 
-                //fill the dataAdapter
-                dataAdapter1.Fill(dataSet);
+                    //fill the dataAdapter
+                    dataAdapter1.Fill(dataSet);
 
-                //asign the detault view manage from dataset to dsView
-                dataViewManager = dataSet.DefaultViewManager;
+                    //asign the detault view manage from dataset to dsView
+                    dataViewManager = dataSet.DefaultViewManager;
 
-                //grid data binding
-                grdRepair.DataSource = dataViewManager;
-                grdRepair.DataMember = "tblRepair";
+                    //grid data binding
+                    grdRepair.DataSource = dataViewManager;
+                    grdRepair.DataMember = "tblRepair";
 
-                /**************scrooling********************************************/
-                //scrool down to buttom
-                if (totalRows > 10)
-                {
-                    grdRepair.FirstDisplayedScrollingRowIndex = grdRepair.RowCount - 1;
+                    /**************scrooling********************************************/
+                    //scrool down to buttom
+                    if (totalRows > 10)
+                    {
+                        grdRepair.FirstDisplayedScrollingRowIndex = grdRepair.RowCount - 1;
+                    }
+
+                    /**************pagenation********************************************/
+                    CalculateTotalPages();
+                    lblTotalPages.Text = "Page: " + totalPage.ToString();
+                    lblTotalRecords.Text = "On: " + rowCount.ToString() + " Records.";
+
+                    //close the connection
+                    connection.Close();
+
                 }
-
-                /**************pagenation********************************************/
-                CalculateTotalPages();
-                lblTotalPages.Text = "Page: "+totalPage.ToString();
-                lblTotalRecords.Text = "On: "+rowCount.ToString() + " Records.";
-
-                //close the connection
-                connection.Close();
-
-            }
-            catch (Exception er)
-            {
-                MessageBox.Show(er.ToString());
+                catch (Exception er)
+                {
+                    //MessageBox.Show(er.ToString());
+                }
             }
         }
         //get the total rows for priority devices
         public int TotalRows()
         {
-            string stmt = @"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+            try
+            {
+                bool exists = IsTabelExists();
+                if (exists == true)
+                {
+                    string stmt = @"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
                             BEGIN TRANSACTION;
                             select COUNT(*) from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) 
-                            and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
+                            and convert(date, GETDATE())  and Manufacturer = '" + manufacture + @"' and Warranty = 1 
                             AND (SVP != 'KCC' AND SVP != 'TCC') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' 
                             and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' 
-                            and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') and (Status != 'X' 
+                            and DealerID != '7551') and (Status != 'X' 
                             and Status != 'C'and Status != 'E' and Status != 'I' and Status != 'B')";
-            int count = 0;
+                    int count = 0;
 
-            using (SqlConnection thisConnection = new SqlConnection(connectionString))
-            {
-                using (SqlCommand cmdCount = new SqlCommand(stmt, thisConnection))
-                {
-                    thisConnection.Open();
-                    cmdCount.CommandTimeout = 0;
-                    count = (int)cmdCount.ExecuteScalar();
+                    using (SqlConnection thisConnection = new SqlConnection(connectionString))
+                    {
+                        using (SqlCommand cmdCount = new SqlCommand(stmt, thisConnection))
+                        {
+                            thisConnection.Open();
+                            cmdCount.CommandTimeout = 0;
+                            count = (int)cmdCount.ExecuteScalar();
+                        }
+                    }
+                    return count;
                 }
+                return 0;
             }
-            return count;
+            catch (Exception)
+            {
+                return 0;
+            }
+            
         }
 
         //get the total rows for back order summary
         public int TotalRowsBKS()
         {
-            string stmt = @"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+            try
+            {
+                bool exists = IsTabelExists();
+                if (exists == true)
+                {
+                    string stmt = @"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
                             BEGIN TRANSACTION;
                             select COUNT(*) from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) 
-                            and convert(date, GETDATE()) and LastTechnician != '' and Manufacturer = '" + manufacture + @"' AND (SVP != 'KCC' AND SVP != 'TCC') 
+                            and convert(date, GETDATE())  and Manufacturer = '" + manufacture + @"' and Warranty = 1 AND (SVP != 'KCC' AND SVP != 'TCC') 
                             and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' 
-                            and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' 
+                            and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' 
                             and DealerID != '132' and DealerID != '6868') and (Status = 'B')";
-            int count = 0;
+                    int count = 0;
 
-            using (SqlConnection thisConnection = new SqlConnection(connectionString))
-            {
-                using (SqlCommand cmdCount = new SqlCommand(stmt, thisConnection))
-                {
-                    thisConnection.Open();
-                    cmdCount.CommandTimeout = 0;
-                    count = (int)cmdCount.ExecuteScalar();
+                    using (SqlConnection thisConnection = new SqlConnection(connectionString))
+                    {
+                        using (SqlCommand cmdCount = new SqlCommand(stmt, thisConnection))
+                        {
+                            thisConnection.Open();
+                            cmdCount.CommandTimeout = 0;
+                            count = (int)cmdCount.ExecuteScalar();
+                        }
+                    }
+                    return count;
                 }
+                return 0;
             }
-            return count;
+            catch (Exception)
+            {
+                return 0;
+            }
+            
         }
         //get the total rows for tech output
         public int TotalRowsTech()
         {
-            string stmt = @"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+            try
+            {
+                bool exists = IsTabelExists();
+                if (exists == true)
+                {
+                    string stmt = @"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
                             BEGIN TRANSACTION;
                             SELECT count (*) FROM tblRepair  
                             where (DateFinish >= '" + currentDate + @" 07:00:00' AND DateFinish < '" + currentDate + @" 22:00:00')  
-                            and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
+                             and Manufacturer = '" + manufacture + @"' and Warranty = 1 
                             AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') 
-                            and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868' and DealerID != '7595') 
+                            and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '7595') 
                             and (Status != 'X')";
-            int count = 0;
+                    int count = 0;
 
-            using (SqlConnection thisConnection = new SqlConnection(connectionString))
-            {
-                using (SqlCommand cmdCount = new SqlCommand(stmt, thisConnection))
-                {
-                    thisConnection.Open();
-                    cmdCount.CommandTimeout = 0;
-                    count = (int)cmdCount.ExecuteScalar();
+                    using (SqlConnection thisConnection = new SqlConnection(connectionString))
+                    {
+                        using (SqlCommand cmdCount = new SqlCommand(stmt, thisConnection))
+                        {
+                            thisConnection.Open();
+                            cmdCount.CommandTimeout = 0;
+                            count = (int)cmdCount.ExecuteScalar();
+                        }
+                    }
+                    return count;
                 }
+                return 0;
             }
-            return count;
+            catch (Exception)
+            {
+                return 0;
+            }
+            
         }
         //get string of AGING
         public void getAllAGING()
         {
-            string stmt = @"select FirstSet.Day1, SecondSet.Day2, ThirdSet.Day3, Four.Day4, Five.Day5, Six.Day6, Seven.Day7 from 
+            try
+            {
+                bool exists = IsTabelExists();
+                if (exists == true)
+                {
+                    string stmt = @"select FirstSet.Day1, SecondSet.Day2, ThirdSet.Day3, Four.Day4, Five.Day5, Six.Day6, Seven.Day7 from 
 	                        (select COUNT(Day1.AGING) as Day1 from 
 		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, 
                                 DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
 		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
-                                and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
-		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
+                                 and Manufacturer = '" + manufacture + @"' and Warranty = 1 
+		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day1 
 		                        where Day1.AGING =1) as FirstSet 
@@ -621,8 +726,8 @@ namespace DisPlay
 		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, 
                                 DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
 		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
-                                and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
-		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
+                                 and Manufacturer = '" + manufacture + @"' and Warranty = 1 
+		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day2 
 		                        where Day2.AGING =2) as SecondSet on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
@@ -631,8 +736,8 @@ namespace DisPlay
 		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, 
                                 DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
 		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
-                                and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
-		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
+                                 and Manufacturer = '" + manufacture + @"' and Warranty = 1 
+		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day3 
 		                        where Day3.AGING =3) as ThirdSet on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
@@ -641,8 +746,8 @@ namespace DisPlay
 		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, 
                                 DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
 		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
-                                and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
-		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
+                                 and Manufacturer = '" + manufacture + @"' and Warranty = 1 
+		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day4 
 		                        where Day4.AGING =4) as Four on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
@@ -651,8 +756,8 @@ namespace DisPlay
 		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, 
                                 DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
 		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
-                                and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
-		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
+                                 and Manufacturer = '" + manufacture + @"' and Warranty = 1 
+		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day5 
 		                        where Day5.AGING =5) as Five on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
@@ -661,8 +766,8 @@ namespace DisPlay
 		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, 
                                 DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
 		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
-                                and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
-		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
+                                 and Manufacturer = '" + manufacture + @"' and Warranty = 1 
+		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day6 
 		                        where Day6.AGING =6) as Six on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
@@ -671,34 +776,40 @@ namespace DisPlay
 		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, 
                                 DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
 		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
-                                and LastTechnician != '' and Manufacturer = '" + manufacture + @"' and Warranty = 1 
-		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '2911' and DealerID != '132' and DealerID != '6868') 
+                                 and Manufacturer = '" + manufacture + @"' and Warranty = 1 
+		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551') 
 		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day7 
 		                        where Day7.AGING >=7) as Seven on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2";
-            
-            using (SqlConnection thisConnection = new SqlConnection(connectionString))
-            {
-                using (SqlCommand cmdCount = new SqlCommand(stmt, thisConnection))
-                {
-                    thisConnection.Open();
-                    cmdCount.CommandTimeout = 0;
-                    SqlDataReader reader = cmdCount.ExecuteReader();
-                    if (reader.HasRows)
+
+                    using (SqlConnection thisConnection = new SqlConnection(connectionString))
                     {
-                        while (reader.Read())
+                        using (SqlCommand cmdCount = new SqlCommand(stmt, thisConnection))
                         {
-                            lblAg1.Text = reader[0].ToString();
-                            lblAg2.Text = reader[1].ToString();
-                            lblAg3.Text = reader[2].ToString();
-                            lblAg4.Text = reader[3].ToString();
-                            lblAg5.Text = reader[4].ToString();
-                            lblAg6.Text = reader[5].ToString();
-                            lblAg7.Text = reader[6].ToString();
+                            thisConnection.Open();
+                            cmdCount.CommandTimeout = 0;
+                            SqlDataReader reader = cmdCount.ExecuteReader();
+                            if (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                {
+                                    lblAg1.Text = reader[0].ToString();
+                                    lblAg2.Text = reader[1].ToString();
+                                    lblAg3.Text = reader[2].ToString();
+                                    lblAg4.Text = reader[3].ToString();
+                                    lblAg5.Text = reader[4].ToString();
+                                    lblAg6.Text = reader[5].ToString();
+                                    lblAg7.Text = reader[6].ToString();
+                                }
+                            }
+
                         }
                     }
-                    
                 }
+            }
+            catch (Exception)
+            {
+                //throw;
             }
             
         }
@@ -708,7 +819,7 @@ namespace DisPlay
             MyTimerTech.Stop();
             getAllTechOutput();
             MyTimerTech = new Timer();
-            MyTimerTech.Interval = (30 * 60 * 1000); // 30 minutes
+            MyTimerTech.Interval = (5 * 60 * 1000); // 5 minutes
             MyTimerTech.Tick += new EventHandler(MyTimer_Tick_Get_Tech_Top_2);
             MyTimerTech.Start();
         }
@@ -718,7 +829,7 @@ namespace DisPlay
             MyTimerTech.Stop();
             getAllTechOutput();
             MyTimerTech = new Timer();
-            MyTimerTech.Interval = (30 * 60 * 1000); // 30 minutes
+            MyTimerTech.Interval = (5 * 60 * 1000); // 5 minutes
             if (TotalRowsBKS() > this.pgSizeTech * 2)
             {
                 MyTimerTech.Tick += new EventHandler(MyTimer_Tick_Get_Tech_Top_1);
