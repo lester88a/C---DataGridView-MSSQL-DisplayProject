@@ -50,7 +50,7 @@ namespace DisPlay
             catch (Exception)
             {
 
-                throw;
+                //throw;
             }
             
         }

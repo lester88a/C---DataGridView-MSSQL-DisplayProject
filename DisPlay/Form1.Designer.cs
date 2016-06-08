@@ -57,6 +57,7 @@
             this.lblManufacture = new System.Windows.Forms.Label();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.btnExit = new System.Windows.Forms.PictureBox();
+            this.label0 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.grdRepair)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grdBKSum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grdTechOutput)).BeginInit();
@@ -224,9 +225,9 @@
             this.label5.ForeColor = System.Drawing.SystemColors.Control;
             this.label5.Location = new System.Drawing.Point(16, 58);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(465, 29);
+            this.label5.Size = new System.Drawing.Size(526, 29);
             this.label5.TabIndex = 17;
-            this.label5.Text = "Days:     1        2       3       4       5       6       7+";
+            this.label5.Text = "Days:     0        1        2       3       4       5       6       7+";
             // 
             // grdTechOutput
             // 
@@ -275,7 +276,7 @@
             this.lblAg1.BackColor = System.Drawing.Color.Transparent;
             this.lblAg1.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblAg1.ForeColor = System.Drawing.Color.Lime;
-            this.lblAg1.Location = new System.Drawing.Point(101, 104);
+            this.lblAg1.Location = new System.Drawing.Point(159, 104);
             this.lblAg1.Name = "lblAg1";
             this.lblAg1.Size = new System.Drawing.Size(52, 29);
             this.lblAg1.TabIndex = 23;
@@ -286,8 +287,8 @@
             this.lblAg2.AutoSize = true;
             this.lblAg2.BackColor = System.Drawing.Color.Transparent;
             this.lblAg2.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAg2.ForeColor = System.Drawing.Color.Orange;
-            this.lblAg2.Location = new System.Drawing.Point(159, 104);
+            this.lblAg2.ForeColor = System.Drawing.Color.Red;
+            this.lblAg2.Location = new System.Drawing.Point(217, 104);
             this.lblAg2.Name = "lblAg2";
             this.lblAg2.Size = new System.Drawing.Size(52, 29);
             this.lblAg2.TabIndex = 24;
@@ -298,8 +299,8 @@
             this.lblAg3.AutoSize = true;
             this.lblAg3.BackColor = System.Drawing.Color.Transparent;
             this.lblAg3.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAg3.ForeColor = System.Drawing.Color.Orange;
-            this.lblAg3.Location = new System.Drawing.Point(218, 104);
+            this.lblAg3.ForeColor = System.Drawing.Color.Red;
+            this.lblAg3.Location = new System.Drawing.Point(276, 104);
             this.lblAg3.Name = "lblAg3";
             this.lblAg3.Size = new System.Drawing.Size(52, 29);
             this.lblAg3.TabIndex = 25;
@@ -310,8 +311,8 @@
             this.lblAg4.AutoSize = true;
             this.lblAg4.BackColor = System.Drawing.Color.Transparent;
             this.lblAg4.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAg4.ForeColor = System.Drawing.Color.Tomato;
-            this.lblAg4.Location = new System.Drawing.Point(272, 104);
+            this.lblAg4.ForeColor = System.Drawing.Color.Red;
+            this.lblAg4.Location = new System.Drawing.Point(330, 104);
             this.lblAg4.Name = "lblAg4";
             this.lblAg4.Size = new System.Drawing.Size(52, 29);
             this.lblAg4.TabIndex = 26;
@@ -322,8 +323,8 @@
             this.lblAg5.AutoSize = true;
             this.lblAg5.BackColor = System.Drawing.Color.Transparent;
             this.lblAg5.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAg5.ForeColor = System.Drawing.Color.Tomato;
-            this.lblAg5.Location = new System.Drawing.Point(328, 104);
+            this.lblAg5.ForeColor = System.Drawing.Color.Red;
+            this.lblAg5.Location = new System.Drawing.Point(386, 104);
             this.lblAg5.Name = "lblAg5";
             this.lblAg5.Size = new System.Drawing.Size(52, 29);
             this.lblAg5.TabIndex = 27;
@@ -334,8 +335,8 @@
             this.lblAg6.AutoSize = true;
             this.lblAg6.BackColor = System.Drawing.Color.Transparent;
             this.lblAg6.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAg6.ForeColor = System.Drawing.Color.Tomato;
-            this.lblAg6.Location = new System.Drawing.Point(384, 104);
+            this.lblAg6.ForeColor = System.Drawing.Color.Red;
+            this.lblAg6.Location = new System.Drawing.Point(442, 104);
             this.lblAg6.Name = "lblAg6";
             this.lblAg6.Size = new System.Drawing.Size(52, 29);
             this.lblAg6.TabIndex = 28;
@@ -347,7 +348,7 @@
             this.lblAg7.BackColor = System.Drawing.Color.Transparent;
             this.lblAg7.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblAg7.ForeColor = System.Drawing.Color.Red;
-            this.lblAg7.Location = new System.Drawing.Point(441, 104);
+            this.lblAg7.Location = new System.Drawing.Point(499, 104);
             this.lblAg7.Name = "lblAg7";
             this.lblAg7.Size = new System.Drawing.Size(52, 29);
             this.lblAg7.TabIndex = 29;
@@ -395,9 +396,9 @@
             // 
             // pictureBox
             // 
-            this.pictureBox.Location = new System.Drawing.Point(506, 30);
+            this.pictureBox.Location = new System.Drawing.Point(552, 30);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(198, 105);
+            this.pictureBox.Size = new System.Drawing.Size(152, 105);
             this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox.TabIndex = 33;
             this.pictureBox.TabStop = false;
@@ -413,12 +414,25 @@
             this.btnExit.TabStop = false;
             this.btnExit.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
+            // label0
+            // 
+            this.label0.AutoSize = true;
+            this.label0.BackColor = System.Drawing.Color.Transparent;
+            this.label0.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label0.ForeColor = System.Drawing.Color.Lime;
+            this.label0.Location = new System.Drawing.Point(101, 104);
+            this.label0.Name = "label0";
+            this.label0.Size = new System.Drawing.Size(52, 29);
+            this.label0.TabIndex = 34;
+            this.label0.Text = "000";
+            // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1261, 721);
+            this.Controls.Add(this.label0);
             this.Controls.Add(this.lblManufacture);
             this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.lblTechOutTotalRows);
@@ -492,6 +506,7 @@
         private System.Windows.Forms.Label lblTechOutTotalRows;
         private System.Windows.Forms.Label lblManufacture;
         private System.Windows.Forms.PictureBox pictureBox;
+        private System.Windows.Forms.Label label0;
     }
 }
 

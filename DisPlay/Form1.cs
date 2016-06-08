@@ -139,7 +139,8 @@ namespace DisPlay
             grdTechOutput2.DefaultCellStyle.SelectionForeColor = grdTechOutput.DefaultCellStyle.ForeColor;
 
             //set up current date format
-            currentDate = DateTime.Now.ToString("MM/dd/yyy");
+            currentDate = DateTime.Now.ToString("yyyy-MM-dd");
+            
             //sign the connection string value
             connectionString = "Data Source=" + serverName + ";Initial Catalog=" + databaseName + ";Integrated Security=True";
             bool exists = IsTabelExists();
@@ -376,6 +377,7 @@ namespace DisPlay
         //getAllTechOutput
         private void getAllTechOutput()
         {
+            currentDate = DateTime.Now.ToString("yyyy-MM-dd");
             bool exists = IsTabelExists();
             if (exists == true)
             {
@@ -449,6 +451,8 @@ namespace DisPlay
                     //close the connection
                     connection.Close();
 
+                    //refresh the winform
+                    this.Refresh();
                 }
                 catch (Exception er)
                 {
@@ -519,6 +523,8 @@ namespace DisPlay
                     //close the connection
                     connection.Close();
 
+                    //refresh the winform
+                    this.Refresh();
                 }
                 catch (Exception er)
                 {
@@ -590,6 +596,9 @@ namespace DisPlay
                     //close the connection
                     connection.Close();
 
+                    //refresh the winform
+                    this.Refresh();
+                    
                 }
                 catch (Exception er)
                 {
@@ -674,6 +683,7 @@ namespace DisPlay
         //get the total rows for tech output
         public int TotalRowsTech()
         {
+            currentDate = DateTime.Now.ToString("yyyy-MM-dd");
             try
             {
                 bool exists = IsTabelExists();
@@ -716,14 +726,14 @@ namespace DisPlay
                 bool exists = IsTabelExists();
                 if (exists == true)
                 {
-                    string stmt = @"select FirstSet.Day1, SecondSet.Day2, ThirdSet.Day3, Four.Day4, Five.Day5, Six.Day6, Seven.Day7 from 
+                    string stmt = @"select ZeroSet.Day0, FirstSet.Day1, SecondSet.Day2, ThirdSet.Day3, Four.Day4, Five.Day5, Six.Day6, Seven.Day7 from 
 	                        (select COUNT(Day1.AGING) as Day1 from 
 		                        (select TOP 1000 RefNumber as Ref#, convert(varchar(6),DateIn,107) as DateIn,FuturetelLocation as Location, 
                                 DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, LastTechnician as Technician 
 		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
                                  and Manufacturer = '" + manufacture + @"' and Warranty = 1 
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551') 
-		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
+		                        and (Status != 'X' and Status != 'C') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day1 
 		                        where Day1.AGING =1) as FirstSet 
                         inner join 
@@ -733,7 +743,7 @@ namespace DisPlay
 		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
                                  and Manufacturer = '" + manufacture + @"' and Warranty = 1 
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551') 
-		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
+		                        and (Status != 'X' and Status != 'C') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day2 
 		                        where Day2.AGING =2) as SecondSet on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
                         inner join 
@@ -743,7 +753,7 @@ namespace DisPlay
 		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
                                  and Manufacturer = '" + manufacture + @"' and Warranty = 1 
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551') 
-		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
+		                        and (Status != 'X' and Status != 'C') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day3 
 		                        where Day3.AGING =3) as ThirdSet on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
                         inner join 
@@ -753,7 +763,7 @@ namespace DisPlay
 		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
                                  and Manufacturer = '" + manufacture + @"' and Warranty = 1 
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551') 
-		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
+		                        and (Status != 'X' and Status != 'C') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day4 
 		                        where Day4.AGING =4) as Four on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
                         inner join 
@@ -763,7 +773,7 @@ namespace DisPlay
 		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
                                  and Manufacturer = '" + manufacture + @"' and Warranty = 1 
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551') 
-		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
+		                        and (Status != 'X' and Status != 'C') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day5 
 		                        where Day5.AGING =5) as Five on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
                         inner join 
@@ -773,7 +783,7 @@ namespace DisPlay
 		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
                                  and Manufacturer = '" + manufacture + @"' and Warranty = 1 
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551') 
-		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
+		                        and (Status != 'X' and Status != 'C') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day6 
 		                        where Day6.AGING =6) as Six on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
                         inner join 
@@ -783,9 +793,14 @@ namespace DisPlay
 		                        from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) and convert(date, GETDATE()) 
                                  and Manufacturer = '" + manufacture + @"' and Warranty = 1 
 		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551') 
-		                        and (Status != 'X' and Status != 'C'and Status != 'E' and Status != 'I') 
+		                        and (Status != 'X' and Status != 'C') 
 		                        group by RefNumber, DateIn, LastTechnician, FuturetelLocation order by LastTechnician ASC, AGING DESC, DateIn ) Day7 
-		                        where Day7.AGING >=7) as Seven on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2";
+		                        where Day7.AGING >=7) as Seven on FirstSet.Day1 >= SecondSet.Day2 or FirstSet.Day1 <= SecondSet.Day2
+						inner join
+						(select  count(*) as Day0 from tblRepair 
+								where  DateIn >= convert(varchar(10),GETDATE(),120) and Manufacturer = '" + manufacture + @"' and Warranty = 1 
+		                        AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551') 
+		                        and (Status != 'X' and Status != 'C')) as ZeroSet on ZeroSet.Day0 >= ZeroSet.Day0";
 
                     using (SqlConnection thisConnection = new SqlConnection(connectionString))
                     {
@@ -798,13 +813,14 @@ namespace DisPlay
                             {
                                 while (reader.Read())
                                 {
-                                    lblAg1.Text = reader[0].ToString();
-                                    lblAg2.Text = reader[1].ToString();
-                                    lblAg3.Text = reader[2].ToString();
-                                    lblAg4.Text = reader[3].ToString();
-                                    lblAg5.Text = reader[4].ToString();
-                                    lblAg6.Text = reader[5].ToString();
-                                    lblAg7.Text = reader[6].ToString();
+                                    label0.Text = reader[0].ToString();
+                                    lblAg1.Text = reader[1].ToString();
+                                    lblAg2.Text = reader[2].ToString();
+                                    lblAg3.Text = reader[3].ToString();
+                                    lblAg4.Text = reader[4].ToString();
+                                    lblAg5.Text = reader[5].ToString();
+                                    lblAg6.Text = reader[6].ToString();
+                                    lblAg7.Text = reader[7].ToString();
                                 }
                             }
 
