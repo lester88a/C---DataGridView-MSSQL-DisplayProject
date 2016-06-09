@@ -64,6 +64,7 @@ namespace DisPlay
             this.grdTechOutput2.RowHeadersVisible = false;
 
             //change the label color
+            lblOverAllAgingTotal.ForeColor = Color.FromArgb(200, 180, 26);
             lblTotalRecords.ForeColor = Color.FromArgb(200, 180, 26);
             lblTotalPages.ForeColor = Color.FromArgb(200, 180, 26);
             lblTotalRows.ForeColor = Color.FromArgb(200, 180, 26);
@@ -821,6 +822,14 @@ namespace DisPlay
                                     lblAg5.Text = reader[5].ToString();
                                     lblAg6.Text = reader[6].ToString();
                                     lblAg7.Text = reader[7].ToString();
+                                    lblOverAllAgingTotal.Text = "Total: "+(Int32.Parse(label0.Text)
+                                        + Int32.Parse(lblAg1.Text)
+                                        + Int32.Parse(lblAg2.Text)
+                                        + Int32.Parse(lblAg3.Text)
+                                        + Int32.Parse(lblAg4.Text)
+                                        + Int32.Parse(lblAg5.Text)
+                                        + Int32.Parse(lblAg6.Text)
+                                        + Int32.Parse(lblAg7.Text)).ToString();
                                 }
                             }
 

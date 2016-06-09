@@ -58,6 +58,7 @@
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.btnExit = new System.Windows.Forms.PictureBox();
             this.label0 = new System.Windows.Forms.Label();
+            this.lblOverAllAgingTotal = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.grdRepair)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grdBKSum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grdTechOutput)).BeginInit();
@@ -426,12 +427,25 @@
             this.label0.TabIndex = 34;
             this.label0.Text = "000";
             // 
+            // lblOverAllAgingTotal
+            // 
+            this.lblOverAllAgingTotal.AutoSize = true;
+            this.lblOverAllAgingTotal.BackColor = System.Drawing.Color.Transparent;
+            this.lblOverAllAgingTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblOverAllAgingTotal.ForeColor = System.Drawing.SystemColors.Control;
+            this.lblOverAllAgingTotal.Location = new System.Drawing.Point(181, 34);
+            this.lblOverAllAgingTotal.Name = "lblOverAllAgingTotal";
+            this.lblOverAllAgingTotal.Size = new System.Drawing.Size(51, 20);
+            this.lblOverAllAgingTotal.TabIndex = 35;
+            this.lblOverAllAgingTotal.Text = "label1";
+            // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1261, 721);
+            this.Controls.Add(this.lblOverAllAgingTotal);
             this.Controls.Add(this.label0);
             this.Controls.Add(this.lblManufacture);
             this.Controls.Add(this.pictureBox);
@@ -507,6 +521,7 @@
         private System.Windows.Forms.Label lblManufacture;
         private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.Label label0;
+        private System.Windows.Forms.Label lblOverAllAgingTotal;
     }
 }
 
