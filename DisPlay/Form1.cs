@@ -485,11 +485,11 @@ namespace DisPlay
                     string cmd = @"select TOP " + total + @"RefNumber as Ref#, DATEDIFF(day, DateIn, convert(date, GETDATE())) as AGING, 
                              LastTechnician as Technician from tblRepair 
                              where DateIn between convert(date,DATEADD(day,-60,GETDATE())) 
-                             and convert(date, GETDATE())  and Manufacturer = '" + manufacture + @"' and Warranty = 1
-                            AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') and (DealerID != '7398' 
-                            and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' and DealerID != '7498' and DealerID != '7550' 
-                            and DealerID != '7552' and DealerID != '7551' and DealerID != '7595') 
-                            and (Status = 'B') group by RefNumber, DateIn, LastTechnician order by AGING DESC";
+                             and convert(date, GETDATE())  and Manufacturer = 'LG' and Warranty = 1
+                            AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') 
+							and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' 
+							and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '7595') 
+                            and (Status = 'B') group by RefNumber, DateIn, LastTechnician  order by RefNumber ASC,  AGING DESC";
                     //Fill the dataset with tblRepair, map the default table "Table" to "tblRepair"
                     SqlDataAdapter dataAdapter1 = new SqlDataAdapter(cmd, connection);
                     //set CommandTimeout to 0
@@ -656,10 +656,11 @@ namespace DisPlay
                     string stmt = @"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
                             BEGIN TRANSACTION;
                             select COUNT(*) from tblRepair where DateIn between convert(date,DATEADD(day,-60,GETDATE())) 
-                            and convert(date, GETDATE())  and Manufacturer = '" + manufacture + @"' and Warranty = 1 AND (SVP != 'KCC' AND SVP != 'TCC') 
+                            and convert(date, GETDATE())  and Manufacturer = 'LG' and Warranty = 1 
+							AND (SVP != 'KCC' AND SVP != 'TCC' AND SVP != 'KXREPAIR' AND SVP != 'TXREPAIR') 
                             and (DealerID != '7398' and DealerID != '7430'  and DealerID != '7432' and DealerID != '7481' and DealerID != '7482' 
-                            and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' 
-                            and DealerID != '132' and DealerID != '6868') and (Status = 'B')";
+                            and DealerID != '7498' and DealerID != '7550' and DealerID != '7552' and DealerID != '7551' and DealerID != '7595') 
+							and (Status = 'B')";
                     int count = 0;
 
                     using (SqlConnection thisConnection = new SqlConnection(connectionString))
