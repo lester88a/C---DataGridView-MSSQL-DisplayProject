@@ -188,7 +188,7 @@
             this.lblBKSTotalRows.BackColor = System.Drawing.Color.Transparent;
             this.lblBKSTotalRows.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblBKSTotalRows.ForeColor = System.Drawing.SystemColors.Control;
-            this.lblBKSTotalRows.Location = new System.Drawing.Point(432, 151);
+            this.lblBKSTotalRows.Location = new System.Drawing.Point(491, 153);
             this.lblBKSTotalRows.Name = "lblBKSTotalRows";
             this.lblBKSTotalRows.Size = new System.Drawing.Size(51, 20);
             this.lblBKSTotalRows.TabIndex = 14;
@@ -200,7 +200,7 @@
             this.lblTotalRecordsBKS.BackColor = System.Drawing.Color.Transparent;
             this.lblTotalRecordsBKS.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalRecordsBKS.ForeColor = System.Drawing.SystemColors.Control;
-            this.lblTotalRecordsBKS.Location = new System.Drawing.Point(329, 151);
+            this.lblTotalRecordsBKS.Location = new System.Drawing.Point(331, 151);
             this.lblTotalRecordsBKS.Name = "lblTotalRecordsBKS";
             this.lblTotalRecordsBKS.Size = new System.Drawing.Size(51, 20);
             this.lblTotalRecordsBKS.TabIndex = 15;
