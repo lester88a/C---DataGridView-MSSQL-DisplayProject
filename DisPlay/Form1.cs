@@ -153,6 +153,8 @@ namespace DisPlay
                 GetBackOrderSumData();
                 //get tech repair output info
                 GetTechRepairOutputData();
+
+
             }
 
         }
@@ -221,14 +223,34 @@ namespace DisPlay
             bool exists = IsTabelExists();
             if (exists == true)
             {
-                getBackOrderSum(0,pgSizeBKS*1);
+                getBackOrderSum(0,pgSizeBKS);
                 MyTimerBKS = new Timer();
-                MyTimerBKS.Interval = (1 * 10 * 1000); // 5 seconds
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_2); //get the next 15 data
+                MyTimerBKS.Interval = (1 * 5 * 1000); // 5 seconds
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_2s); //get the next 15 data
                 MyTimerBKS.Start();
             }
         }
+        //MyTimer_Tick_Get_BKS_Top_2s----------------------BKS
+        private async void MyTimer_Tick_Get_BKS_Top_2s(object sender, EventArgs e)
+        {
+            MyTimerBKS.Stop();
 
+            for (int i = 0; i <= (TotalRowsBKS() / pgSizeBKS); i++)
+            {
+                MyTimerBKS.Stop();
+                getBackOrderSum(i * pgSizeBKS, pgSizeBKS);
+                await Task.Delay(10000);
+
+                MyTimerBKS = new Timer();
+                MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_2s);
+                MyTimerBKS.Start(); 
+            }
+            
+
+        }
+
+       
         private void GetPriorityDevicesData()
         {
             bool exists = IsTabelExists();
@@ -238,10 +260,27 @@ namespace DisPlay
                 getData(0,this.pgSize * 1);
                 MyTimer = new Timer();
                 MyTimer.Interval = (1 * 10 * 1000); // 5 seconds
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_40); //get the next 20 data
+                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_40s); //get the next 20 data
                 MyTimer.Start();
             }
         }
+        //MyTimer_Tick_Get_Top_40s
+        private async void MyTimer_Tick_Get_Top_40s(object sender, EventArgs e)
+        {
+            MyTimer.Stop();
+            for (int i = 0; i <= (TotalRows() / pgSize); i++)
+            {
+                MyTimer.Stop();
+                getData(pgSize * i, pgSize);
+                await Task.Delay(10000);
+                MyTimer = new Timer();
+                MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_40s);
+                MyTimer.Start();
+            }
+        }
+
+
         //method for verify the table exists
         private bool IsTabelExists()
         {
@@ -876,798 +915,798 @@ namespace DisPlay
             MyTimerTech.Start();
         }
        
-        //MyTimer_Tick_Get_BKS_Top_1----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_1(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(pgSizeBKS*0,pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 1)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_2);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_2----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_2(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(pgSizeBKS*1,pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 2)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_3);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_3----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_3(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(this.pgSizeBKS * 2,this.pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 3)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_4);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_4----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_4(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(this.pgSizeBKS * 3,this.pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 4)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_5);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_5----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_5(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(this.pgSizeBKS * 4,this.pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 5)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_6);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_6----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_6(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(this.pgSizeBKS * 5,this.pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 6)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_7);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_7----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_7(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(this.pgSizeBKS * 6,this.pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 7)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_8);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_8----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_8(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(this.pgSizeBKS * 7,this.pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 8)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_9);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_9----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_9(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(this.pgSizeBKS * 8,this.pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 9)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_10);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_10----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_10(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(this.pgSizeBKS * 9,this.pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 10)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_11);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_11----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_11(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(this.pgSizeBKS * 10, this.pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 11)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_12);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_12----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_12(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(this.pgSizeBKS * 11, this.pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 12)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_13);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_13----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_13(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(this.pgSizeBKS * 12, this.pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 13)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_14);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_14----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_14(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(this.pgSizeBKS * 13, this.pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 14)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_15);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_15----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_15(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(this.pgSizeBKS * 14, this.pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 15)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_16);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_16----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_16(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(this.pgSizeBKS * 15, this.pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 16)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_17);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_17----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_17(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(this.pgSizeBKS * 16, this.pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 17)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_18);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_18----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_18(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(this.pgSizeBKS * 17, this.pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 18)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_19);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_19----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_19(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(this.pgSizeBKS * 18, this.pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 19)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_20);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_BKS_Top_20----------------------BKS
-        private void MyTimer_Tick_Get_BKS_Top_20(object sender, EventArgs e)
-        {
-            MyTimerBKS.Stop();
-            getBackOrderSum(this.pgSizeBKS * 19, this.pgSizeBKS);
-            MyTimerBKS = new Timer();
-            MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRowsBKS() > this.pgSizeBKS * 20)
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            else
-            {
-                MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
-            }
-            MyTimerBKS.Start();
-        }
-        //MyTimer_Tick_Get_Top_20
-        private void MyTimer_Tick_Get_Top_20(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*0, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 20)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_40);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
+        ////MyTimer_Tick_Get_BKS_Top_1----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_1(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(pgSizeBKS*0,pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 1)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_2);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_2----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_2(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(pgSizeBKS*1,pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 2)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_3);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_3----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_3(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(this.pgSizeBKS * 2,this.pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 3)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_4);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_4----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_4(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(this.pgSizeBKS * 3,this.pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 4)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_5);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_5----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_5(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(this.pgSizeBKS * 4,this.pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 5)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_6);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_6----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_6(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(this.pgSizeBKS * 5,this.pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 6)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_7);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_7----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_7(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(this.pgSizeBKS * 6,this.pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 7)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_8);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_8----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_8(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(this.pgSizeBKS * 7,this.pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 8)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_9);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_9----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_9(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(this.pgSizeBKS * 8,this.pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 9)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_10);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_10----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_10(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(this.pgSizeBKS * 9,this.pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 10)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_11);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_11----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_11(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(this.pgSizeBKS * 10, this.pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 11)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_12);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_12----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_12(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(this.pgSizeBKS * 11, this.pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 12)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_13);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_13----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_13(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(this.pgSizeBKS * 12, this.pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 13)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_14);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_14----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_14(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(this.pgSizeBKS * 13, this.pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 14)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_15);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_15----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_15(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(this.pgSizeBKS * 14, this.pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 15)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_16);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_16----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_16(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(this.pgSizeBKS * 15, this.pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 16)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_17);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_17----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_17(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(this.pgSizeBKS * 16, this.pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 17)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_18);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_18----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_18(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(this.pgSizeBKS * 17, this.pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 18)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_19);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_19----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_19(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(this.pgSizeBKS * 18, this.pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 19)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_20);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_BKS_Top_20----------------------BKS
+        //private void MyTimer_Tick_Get_BKS_Top_20(object sender, EventArgs e)
+        //{
+        //    MyTimerBKS.Stop();
+        //    getBackOrderSum(this.pgSizeBKS * 19, this.pgSizeBKS);
+        //    MyTimerBKS = new Timer();
+        //    MyTimerBKS.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRowsBKS() > this.pgSizeBKS * 20)
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    else
+        //    {
+        //        MyTimerBKS.Tick += new EventHandler(MyTimer_Tick_Get_BKS_Top_1);
+        //    }
+        //    MyTimerBKS.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_20
+        //private void MyTimer_Tick_Get_Top_20(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*0, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 20)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_40);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
 
-        //MyTimer_Tick_Get_Top_40
-        private void MyTimer_Tick_Get_Top_40(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*1, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 40)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_60);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
+        ////MyTimer_Tick_Get_Top_40
+        //private void MyTimer_Tick_Get_Top_40(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*1, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 40)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_60);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
 
-        //MyTimer_Tick_Get_Top_60
-        private void MyTimer_Tick_Get_Top_60(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*2, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 60)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_80);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_80
-        private void MyTimer_Tick_Get_Top_80(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*3, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 80)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_100);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_100
-        private void MyTimer_Tick_Get_Top_100(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*4, pgSize);
-            //rowCount = dataSet.Tables["tblRepair"].Rows.Count;
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 100)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_120);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_120(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*5, pgSize);
+        ////MyTimer_Tick_Get_Top_60
+        //private void MyTimer_Tick_Get_Top_60(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*2, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 60)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_80);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_80
+        //private void MyTimer_Tick_Get_Top_80(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*3, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 80)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_100);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_100
+        //private void MyTimer_Tick_Get_Top_100(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*4, pgSize);
+        //    //rowCount = dataSet.Tables["tblRepair"].Rows.Count;
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 100)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_120);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_120(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*5, pgSize);
             
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 120)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_140);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_140(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*6, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 120)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_140);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_140(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*6, pgSize);
             
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 140)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_160);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_160(object sender, EventArgs e)
-        {
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 140)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_160);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_160(object sender, EventArgs e)
+        //{
             
-            MyTimer.Stop();
-            getData(pgSize*7, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 160)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_180);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_180(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*8, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 180)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_200);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_200(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*9, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 200)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_220);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_220(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*10, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 220)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_240);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_240(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*11, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 240)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_260);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_260(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*13, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 260)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_280);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_280(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*13, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 280)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_300);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_300(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*14, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 300)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_320);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_320(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*15, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 320)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_340);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_340(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*16, pgSize);
+        //    MyTimer.Stop();
+        //    getData(pgSize*7, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 160)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_180);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_180(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*8, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 180)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_200);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_200(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*9, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 200)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_220);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_220(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*10, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 220)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_240);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_240(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*11, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 240)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_260);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_260(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*13, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 260)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_280);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_280(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*13, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 280)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_300);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_300(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*14, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 300)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_320);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_320(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*15, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 320)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_340);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_340(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*16, pgSize);
             
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 340)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_360);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_360(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*17, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 340)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_360);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_360(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*17, pgSize);
             
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 360)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_380);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_380(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*18, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 360)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_380);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_380(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*18, pgSize);
             
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 380)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_400);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_400(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*19, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 380)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_400);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_400(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*19, pgSize);
             
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 400)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_420);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_420(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*20, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 420)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_440);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_440(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*21, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 440)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_460);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_460(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*22, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 460)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_480);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_480(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*23, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 480)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_500);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_500(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*24, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 500)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_520);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
-        //MyTimer_Tick_Get_Top_120
-        private void MyTimer_Tick_Get_Top_520(object sender, EventArgs e)
-        {
-            MyTimer.Stop();
-            getData(pgSize*25, pgSize);
-            MyTimer = new Timer();
-            MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
-            if (TotalRows() > 520)
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            else
-            {
-                MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
-            }
-            MyTimer.Start();
-        }
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 400)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_420);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_420(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*20, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 420)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_440);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_440(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*21, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 440)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_460);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_460(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*22, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 460)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_480);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_480(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*23, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 480)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_500);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_500(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*24, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 500)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_520);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
+        ////MyTimer_Tick_Get_Top_120
+        //private void MyTimer_Tick_Get_Top_520(object sender, EventArgs e)
+        //{
+        //    MyTimer.Stop();
+        //    getData(pgSize*25, pgSize);
+        //    MyTimer = new Timer();
+        //    MyTimer.Interval = (1 * 10 * 1000); // 10 seconds
+        //    if (TotalRows() > 520)
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    else
+        //    {
+        //        MyTimer.Tick += new EventHandler(MyTimer_Tick_Get_Top_20);
+        //    }
+        //    MyTimer.Start();
+        //}
 
     }
 }
